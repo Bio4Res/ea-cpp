@@ -1,0 +1,7 @@
+{
+	"numruns" : 30,
+    "problem" : "rastrigin",
+    "numvars" : 20,
+    "range"   : 5.12,
+    "numbits" : 0
+}
