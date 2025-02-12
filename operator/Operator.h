@@ -53,8 +53,6 @@ namespace ea {
          */
         void newRun() {
         }
-
-//        virtual std::string toString() = 0;
     };
 
 }

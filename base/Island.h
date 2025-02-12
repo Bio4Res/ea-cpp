@@ -81,7 +81,7 @@ namespace ea {
          * @param ic the configuration of the island
          */
         Island(int id, const config::IslandConfiguration& ic) : 
-                maxEvals{ ic.maxEvals }, mu{ ic.popSize }, lambda{ ic.numOffspring } {
+                mu{ ic.popSize }, lambda{ ic.numOffspring }, maxEvals{ ic.maxEvals }{
             this->id = id;
             population = std::make_unique<individuals_v>();
             population->reserve(mu);
@@ -185,7 +185,7 @@ namespace ea {
 
             auto placeholder = individuals_v{};
             for (int i = 0; i < mu; i++) {
-                std::unique_ptr<Individual> ind = std::move(initialization->apply(placeholder));
+                std::unique_ptr<Individual> ind = initialization->apply(placeholder);
                 obj->evaluate(*ind);
                 population->push_back(std::move(ind));
                 
@@ -211,7 +211,7 @@ namespace ea {
 
             if (obj->getEvals() < maxEvals) {
                 // immigration ----------------------------------------------------
-                population = std::move(migrate->receive(*population));
+                population = migrate->receive(*population);
                 // selection ------------------------------------------------------
                 auto offspring = selection->apply(*population, poolSize);
                 // reproduction ---------------------------------------------------

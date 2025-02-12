@@ -38,7 +38,7 @@ namespace ea {
          */
         Individual(const Individual & individual) noexcept{
             setFitness(individual.fitness);
-            setGenome(std::move(individual.genome->clone()));
+            setGenome(individual.genome->clone());
             evaluated = individual.evaluated;
         }
 
