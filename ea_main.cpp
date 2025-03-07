@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
         }
         else {
             lastseedf >> seed;
-            conf.seed = seed + 1; //JES: que pasa con el escannner ¿actualiza el valor del fichero tambien? OJO
+            conf.seed = ++seed;
         }
         lastseedf.close();
 
@@ -246,11 +246,12 @@ int main(int argc, char* argv[]) {
         std::cout << "-------------------------------------------------------------------------------------\n";
         std::cout << "Running the EA on " << experiment.problem << "(" << experiment.numvars << ", " << experiment.range << ")";
         if (experiment.numbits > 0) {
-            std::cout << " binarized with " << experiment.numbits << " bits per variable\n";
+            std::cout << " binarized with " << experiment.numbits << " bits per variable";
         }
         else {
-            std::cout << " on a continuous domain\n";
+            std::cout << " on a continuous domain";
         }
+        std::cout << " with seed " << seed << "\n";
         std::cout << "-------------------------------------------------------------------------------------\n";
 
         for (int i = 0; i < numruns; i++) {
