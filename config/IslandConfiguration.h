@@ -91,7 +91,7 @@ namespace config{
 
             str += "\n";
             size_t n = variationOps.size();
-            for (int i = 1; i < n; i++) {
+            for (size_t i = 1; i < n; i++) {
                 str += "variation: " + variationOps[i].name + " (";
                 std::for_each(variationOps[i].params.begin(), variationOps[i].params.end(),
                     [&str](const auto& elem) { str += elem + " "; });
@@ -168,7 +168,7 @@ namespace config{
         if (j.contains("variation")) {
             std::vector<OperatorConfiguration> opv = j.at("variation").get<std::vector<OperatorConfiguration>>();
             size_t opvsize = opv.size();
-            for (int i = 0; i < opvsize; ++i)
+            for (size_t i = 0; i < opvsize; ++i)
                 c.variationOps.push_back(std::move(opv[i]));
         }
         else {

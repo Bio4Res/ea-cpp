@@ -51,7 +51,7 @@ namespace ea {
          */
         std::unique_ptr<Individual> apply(const individuals_v & parents) {
             std::unique_ptr<Individual> child;
-            if (parents.size() == getArity()) {
+            if (parents.size() == (size_t)getArity()) {
                 if (EAUtilRandom::instance().random01() < prob) {
                     child = apply_(parents);
                 }

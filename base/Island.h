@@ -95,7 +95,7 @@ namespace ea {
 
             initialization = VariationFactory::create(ic.variationOps[0].name, ic.variationOps[0].params);
             poolSize = lambda;
-            for (int i = 1; i < numOps; i++) {
+            for (size_t i = 1; i < numOps; i++) {
                 auto op = VariationFactory::create(ic.variationOps[i].name, ic.variationOps[i].params);
                 poolSize *= op->getArity();
                 variationOps.push_back(std::move(op));

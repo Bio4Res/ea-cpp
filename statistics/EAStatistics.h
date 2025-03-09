@@ -106,7 +106,7 @@ namespace ea {
         json toJSON() const override {
             json jsondata = json::array(); 
             size_t n = seeds.size();
-            for (int i = 0; i < n; i++)
+            for (size_t i = 0; i < n; i++)
                 jsondata.push_back(toJSON(i));
             return jsondata;
         }
@@ -123,7 +123,7 @@ namespace ea {
         Individual& getBest(int i) override {
             size_t n = islands.size();
             auto& best = islands.at(0)->getStatistics()->getBest(i);
-            for (int j = 1; j < n; j++) {
+            for (size_t j = 1; j < n; j++) {
                 auto& cand = islands.at(j)->getStatistics()->getBest(i);
                 //if (comparator(cand, best) < 0)
                 if (comparator(cand, best))
@@ -135,7 +135,7 @@ namespace ea {
         Individual& getBest() override {
             size_t numruns = seeds.size();
             auto& best = getBest(0);
-            for (int j = 1; j < numruns; j++) {
+            for (size_t j = 1; j < numruns; j++) {
                 auto& cand = getBest(j);
                 //if (comparator(cand, best) < 0)
                 if (comparator(cand, best))

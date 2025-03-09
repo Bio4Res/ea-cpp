@@ -79,7 +79,7 @@ namespace ea {
             double mean = best->getFitness();
             size_t l = pop.size();
 
-            for (int i = 1; i < l; i++) {
+            for (size_t i = 1; i < l; i++) {
                 auto & ind = pop.at(i);
                 //if (comparator(ind, best) < 0) {
                 if (comparator(*ind, *best)) {
@@ -143,7 +143,7 @@ namespace ea {
                             const auto & g = p.individual->getGenome();
                             json jsongenome = json::array();
                             size_t n = g->length();
-                            for (int j = 0; j < n; j++) {
+                            for (size_t j = 0; j < n; j++) {
                                 if (auto* v = std::get_if<int>(&(g->genes[j])); v != nullptr) {
                                     jsongenome.push_back(*v);
                                 }else{
@@ -164,7 +164,7 @@ namespace ea {
         json toJSON() const override {
             json jsondata = json::array();
             size_t n = stats.size();
-            for (int i = 0; i < n; i++)
+            for (size_t i = 0; i < n; i++)
                 jsondata.push_back(toJSON(i));
             return jsondata;
         }
@@ -179,7 +179,7 @@ namespace ea {
         Individual& getBest() override {
             size_t numruns = stats.size();
             Individual& best = getBest(0);
-            for (int j = 1; j < numruns; j++) {
+            for (size_t j = 1; j < numruns; j++) {
                 Individual& cand = getBest(j);
                 //if (comparator(cand, best) < 0)
                 if (comparator(cand, best))
@@ -209,7 +209,7 @@ namespace ea {
 
     std::ostream& operator<<(std::ostream& os, const IslandStatistics& is){
         size_t runs = is.stats.size();
-        for (int i = 0; i < runs; i++) {
+        for (size_t i = 0; i < runs; i++) {
             auto * runstats = is.stats.at(i);
             os << "Run " << i << "\n=======\n" << "#evals\tbest\tmean\n------\t----\t----\n";
             std::for_each(runstats->begin(), runstats->end(), [&os](auto & s) {

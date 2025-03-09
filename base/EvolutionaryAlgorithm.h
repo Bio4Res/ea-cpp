@@ -95,7 +95,8 @@ namespace ea {
                 if (i->getID() == id)
                     return *i;
             }
-            assert(false);
+            //assert(false);
+            throw std::runtime_error("No Island with provided id");
         }
 
         /**

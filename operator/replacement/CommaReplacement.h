@@ -31,12 +31,12 @@ namespace ea {
             auto result = std::make_unique<individuals_v>();
             result->reserve(mu);
             auto num = std::min(lambda, mu);
-            for (int i = 0; i < num; i++)
+            for (size_t i = 0; i < num; i++)
                 result->push_back(offspring[i]);
             if (lambda < mu) {
                 sort(population);
                 num = mu - lambda;
-                for (int i = 0; i < num; i++) {
+                for (size_t i = 0; i < num; i++) {
                     result->push_back(population[i]);
                 }
             }

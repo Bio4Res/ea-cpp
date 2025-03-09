@@ -31,7 +31,7 @@ namespace ea {
             size_t l = father->length();
             std::unique_ptr<Genotype> offspring = std::make_unique<Genotype>(l);
 
-            for (int i = 0; i < l; ++i) {
+            for (size_t i = 0; i < l; ++i) {
                 double fg = std::get<double>(father->genes[i]);
                 double mg = std::get<double>(mother->genes[i]);
                 double minval = std::min(fg, mg);

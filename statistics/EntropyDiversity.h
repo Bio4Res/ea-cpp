@@ -12,11 +12,11 @@ namespace ea {
         double apply(const individuals_v & pop) override {
             size_t n = pop[0]->getGenome()->length();
             std::vector<std::unordered_map<int, int>> freq(n);
-            for (int i = 0; i < n; i++)
+            for (size_t i = 0; i < n; i++)
                 freq[i] = std::unordered_map<int, int>();
             for (const auto& ind : pop) {
                 auto g = ind->getGenome();
-                for (int i = 0; i < n; i++) {
+                for (size_t i = 0; i < n; i++) {
                     int v = std::get<int>(g->genes[i]);
                     auto& map = freq[i];
                     if (map.contains(v)) {
@@ -28,7 +28,7 @@ namespace ea {
                 }
             }
             double h = 0.0;
-            for (int i = 0; i < n; i++) {
+            for (size_t i = 0; i < n; i++) {
                 double lh = 0.0;
                 auto& map = freq[i];
                 if (map.size() > 1) {

@@ -36,7 +36,7 @@ namespace ea {
 
             for (int i = 0; i <= c; i++)
                 offspring->genes[i] = father->genes[i];
-            for (int i = c + 1; i < l; i++)
+            for (size_t i = c + 1; i < l; i++)
                 offspring->genes[i] = mother->genes[i];
 
             std::unique_ptr<Individual> ind = std::make_unique<Individual>();

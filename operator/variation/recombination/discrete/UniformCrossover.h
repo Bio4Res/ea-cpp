@@ -29,7 +29,7 @@ namespace ea {
             size_t l = father->length();
             std::unique_ptr<Genotype> offspring = std::make_unique<Genotype>(l);
 
-            for (int i = 0; i < l; ++i) {
+            for (size_t i = 0; i < l; ++i) {
                 if (EAUtilRandom::instance().random(2) > 0)
                     offspring->genes[i] = father->genes[i];
                 else
