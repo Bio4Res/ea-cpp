@@ -46,7 +46,11 @@ namespace ea {
          * @param pop a list of individuals
          */
         void sort(individuals_v & pop) {
-            std::sort(std::execution::par, pop.begin(), pop.end(), [this](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b) { /*return(comparator(a, b) < 0);*/ return comparator(*a, *b); });
+        #ifdef EA_PARALLEL
+            std::sort(std::execution::par_unseq, pop.begin(), pop.end(), [this](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b) { return comparator(*a, *b); });
+        #else
+            std::sort(std::execution::seq, pop.begin(), pop.end(), [this](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b) { return comparator(*a, *b); });       
+        #endif
         }
         /**
          * Performs whatever actions are required at the beginning of a run

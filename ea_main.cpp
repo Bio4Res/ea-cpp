@@ -5,6 +5,10 @@
 #include <thread>
 #include <util/enumutils.h>
 
+#ifdef EA_PARALLEL
+#include <tbb/global_control.h> //TBB as the backend for paralelism
+#endif
+
 #include <fitness/ObjectiveFunction.h>
 #include <fitness/BinaryEncodedContinuousObjectiveFunction.h>
 #include <problem/discrete/binary/onemax/OneMax.h>
@@ -12,6 +16,11 @@
 #include <problem/continuous/Rosenbrock.h>
 #include <problem/continuous/Sphere.h>
 #include <problem/continuous/Ackley.h>
+#include <problem/continuous/Griewank.h>
+#include <problem/continuous/Schaffer2.h>
+#include <problem/continuous/Schwefel.h>
+#include <problem/continuous/Solomon.h>
+#include <problem/continuous/XinSheYang2.h>
 #include <statistics/DiversityMeasure.h>
 #include <statistics/EntropyDiversity.h>
 #include <config/EAConfiguration.h>
@@ -20,7 +29,7 @@
 
 using json = nlohmann::json;
 
-ENUM(enumObjectiveFunctionType, int, ONEMAX, TRAP, MMDP, LEADING_ONES, TSP, LOP, SPHERE, BIN_SPHERE, ES_ESPHERE, ACKLEY, RASTRIGIN, ROSENBROCK)
+ENUM(enumObjectiveFunctionType, int, ONEMAX, TRAP, MMDP, LEADING_ONES, TSP, LOP, SPHERE, BIN_SPHERE, ES_ESPHERE, ACKLEY, RASTRIGIN, ROSENBROCK, GRIEWANK, SCHAFFER2, SCHWEFEL, SOLOMON, XINSHEYANG2)
 
 std::shared_ptr<ea::ObjectiveFunction> create(std::string &problem, const int & arg1, const double & arg2 ) {
 
@@ -40,6 +49,17 @@ std::shared_ptr<ea::ObjectiveFunction> create(std::string &problem, const int & 
         return std::make_shared <ea::Rosenbrock>(arg1, arg2);
     case enumObjectiveFunctionType::SPHERE:
         return std::make_shared <ea::Sphere>(arg1, arg2);
+
+        case enumObjectiveFunctionType::GRIEWANK:
+        return std::make_shared <ea::Griewank>(arg1, arg2);
+        case enumObjectiveFunctionType::SCHAFFER2:
+        return std::make_shared <ea::Schaffer2>(arg1, arg2);
+        case enumObjectiveFunctionType::SCHWEFEL:
+        return std::make_shared <ea::Schwefel>(arg1, arg2);
+        case enumObjectiveFunctionType::SOLOMON:
+        return std::make_shared <ea::Solomon>(arg1, arg2);
+        case enumObjectiveFunctionType::XINSHEYANG2:
+        return std::make_shared <ea::XinSheYang2>(arg1, arg2);
 
         /*
             case enumObjectiveFunctionType::TRAP:
@@ -189,7 +209,16 @@ void from_json(const json& j, Experiment & e) {
 int main(int argc, char* argv[]) {
 
     std::string expName = (argc < 2) ? "experiment.json" : argv[1];
-    //std::string expName = "experiment.json";
+
+#ifdef EA_PARALLEL
+    // Detectar número de núcleos disponibles
+    int max_threads = std::thread::hardware_concurrency();
+    tbb::global_control global_limit(
+        tbb::global_control::max_allowed_parallelism, 
+        max_threads/2
+    );
+#endif
+
 
     try {
         //lee el json  
