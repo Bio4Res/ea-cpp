@@ -36,10 +36,10 @@ namespace ea {
         double evaluate_(Individual & i) override {
             Genotype* g = i.getGenome();
             double s = c;
-            double v1 = std::get<double>(g->genes[0]);
+            double v1 = g->genes[0].d;
             double v12 = v1 * v1;
             for (int j=1; j<numvars; j++) {
-                double v2 = std::get<double>(g->genes[j]);
+                double v2 = g->genes[j].d;
                 double v22 = v2*v2;
                 double d1 = v12 - v22;
                 double d2 = v12 + v22;

@@ -34,7 +34,7 @@ namespace ea {
             Genotype* g = i.getGenome();
             double s = 0.0;
             for (int j=0; j<numvars; j++) {
-                double v = std::get<double>(g->genes[j]);
+                double v = g->genes[j].d;
                 s += v*std::sin(std::sqrt(std::abs(v)));
             }
             return c - s;

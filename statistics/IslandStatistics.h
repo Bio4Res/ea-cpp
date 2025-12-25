@@ -25,7 +25,7 @@ namespace ea {
         /**
          * last best solution in the current run
          */
-        std::shared_ptr<Individual> last = nullptr;
+        Individual last;
     public:
         /**
          * Initializes statistics for a batch of runs
@@ -76,16 +76,16 @@ namespace ea {
          */
         void takeStats(long evals, individuals_v & pop) {
             auto & best = pop.at(0);
-            double mean = best->getFitness();
+            double mean = best.getFitness();
             size_t l = pop.size();
 
             for (size_t i = 1; i < l; i++) {
                 auto & ind = pop.at(i);
                 //if (comparator(ind, best) < 0) {
-                if (comparator(*ind, *best)) {
+                if (comparator(ind, best)) {
                     best = ind;
                 }
-                mean += ind->getFitness();
+                mean += ind.getFitness();
             }
             mean /= l;
 
@@ -93,9 +93,9 @@ namespace ea {
             if (diversity != nullptr)
                 h = diversity->apply(pop);
 
-            current->push_back(StatsEntry{ evals, best->getFitness(), mean, h });
+            current->push_back(StatsEntry{ evals, best.getFitness(), mean, h });
 
-            if ((currentSols->size() == 0) || /*(comparator(best, last) < 0))*/ comparator(*best, *last)) {
+            if ((currentSols->size() == 0) || /*(comparator(best, last) < 0))*/ comparator(best, last)) {
                 currentSols->push_back(IndividualRecord{ evals, best });
                 last = best;
             }
@@ -139,15 +139,15 @@ namespace ea {
                         auto * soldata = sols[i];
                         for (auto & p : *soldata) {
                             jsonsolsevals.push_back(p.evals);
-                            jsonsolsfitness.push_back(p.individual->getFitness());
-                            const auto & g = p.individual->getGenome();
+                            jsonsolsfitness.push_back(p.individual.getFitness());
+                            const auto & g = p.individual.getGenome();
                             json jsongenome = json::array();
                             size_t n = g->length();
                             for (size_t j = 0; j < n; j++) {
-                                if (auto* v = std::get_if<int>(&(g->genes[j])); v != nullptr) {
-                                    jsongenome.push_back(*v);
+                                if (g->getType() == GeneType::INT) {
+                                     jsongenome.push_back(g->genes[j].i);
                                 }else{
-                                    jsongenome.push_back(std::get<double>(g->genes[j]));
+                                    jsongenome.push_back(g->genes[j].d);
                                 }
                             }
                             jsonsolsgenome.push_back(jsongenome);
@@ -171,7 +171,7 @@ namespace ea {
 
         Individual& getBest(int i) override {
             auto * data = sols.at(i);
-            return *data->back().individual;
+            return data->back().individual;
             //int n = static_cast<int>(data->size());
             //return data->at(n - 1).individual;
         }

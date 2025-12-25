@@ -55,18 +55,18 @@ namespace ea {
             tournamentSize = thetournamentSize;
         }
 
-        std::unique_ptr<individuals_v> apply(individuals_v & population, const int& num) override {
-            auto result = std::make_unique<individuals_v>();
-            result->reserve(num);
+        individuals_v apply(individuals_v & population, const int& num) override {
+            individuals_v result;
+            result.reserve(num);
             auto mu = population.size();
             for (int i = 0; i < num; i++) {
                int best = EAUtilRandom::instance().random(mu);
                for (int j = 1; j < tournamentSize; j++) {
                     int cand = EAUtilRandom::instance().random(mu);
-                    if (comparator(*(population[cand]), *(population[best])))
+                    if (comparator(population[cand], population[best]))
                        best = cand;
                }
-               result->push_back(population[best]);
+               result.push_back(population[best]);
             }
             return result;
         }

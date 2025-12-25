@@ -24,17 +24,17 @@ namespace ea {
         friend std::ostream& operator<<(std::ostream& os, const GaussianMutation & indiv);
 
     protected:
-        std::unique_ptr<Individual> apply_(const individuals_v& parents) override {
+        Individual apply_(const individuals_v& parents) override {
             auto p = std::dynamic_pointer_cast<ContinuousObjectiveFunction>(obj);
-            auto ind = std::make_unique<Individual>(*(parents[0]));
-            auto g = ind->getGenome();
+            auto ind = Individual(parents[0]);
+            auto g = ind.getGenome();
             auto pos = EAUtilRandom::instance().random(g->length());
 
-            double v = std::get<double>(g->genes[pos]);
+            double v = g->genes[pos].d;
             double val = v * (1.0 + stepsize * EAUtilRandom::instance().nrandom());
 
-            g->genes[pos] = std::min(p->getMaxVal(pos), std::max(p->getMinVal(pos), val));
-            ind->touch();
+            g->genes[pos].d = std::min(p->getMaxVal(pos), std::max(p->getMinVal(pos), val));
+            ind.touch();
             return ind;
         }
 

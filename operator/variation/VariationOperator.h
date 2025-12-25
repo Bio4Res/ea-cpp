@@ -49,15 +49,15 @@ namespace ea {
          * @param parents the parents
          * @return an individual
          */
-        std::unique_ptr<Individual> apply(const individuals_v & parents) {
-            std::unique_ptr<Individual> child;
+        Individual apply(const individuals_v & parents) {
             if (parents.size() == (size_t)getArity()) {
                 if (EAUtilRandom::instance().random01() < prob) {
-                    child = apply_(parents);
+                    return apply_(parents);
                 }
                 else
-                    child = std::make_unique<Individual>(*parents.front());
+                    return parents.front();
             }
+            Individual child;
             return child;
         }
 
@@ -70,7 +70,7 @@ namespace ea {
          * @return an individual created from those parents
          */
     protected:
-        virtual std::unique_ptr<Individual> apply_(const individuals_v & parents) = 0;
+        virtual Individual apply_(const individuals_v & parents) = 0;
 
     };
 

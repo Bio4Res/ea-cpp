@@ -12,7 +12,7 @@ namespace ea {
 
     struct IndividualRecord {
         long evals;
-        std::shared_ptr<Individual> individual;
+        Individual individual;
     };
 
 

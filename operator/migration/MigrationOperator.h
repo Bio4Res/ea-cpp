@@ -122,7 +122,7 @@ namespace ea {
                 if (counter == 0) {
                     counter = frequency;
                     for (const auto& c : connections) {
-                        c.second->add(emigrate->apply(population, numIndividuals));
+                        c.second->add(std::move(emigrate->apply(population, numIndividuals)));
                     }
                     return true;
                 }
@@ -138,13 +138,16 @@ namespace ea {
          * @param population the list of individuals to which migrants will be inserted
          * @return the updated population
          */
-        std::unique_ptr<individuals_v> receive(individuals_v & population) {
+        individuals_v receive(individuals_v && population) {
             if (immigrate != nullptr) {
+                if (buffer->empty()) {
+                    return population; 
+                }
                 auto all = buffer->getAll();
-                return immigrate->apply(population, *all);
+                return immigrate->apply(std::move(population), std::move(*all));
             }
 
-            return make_unique<individuals_v>(population);
+            return population;
         }
 /*
         std::string toString() override {

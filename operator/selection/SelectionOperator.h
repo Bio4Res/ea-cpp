@@ -12,7 +12,7 @@ namespace ea {
          * @param num the number of individuals to be selected
          * @return the populations of selected individuals
          */
-        virtual std::unique_ptr<individuals_v> apply(individuals_v & population, const int& num) = 0;
+        virtual individuals_v apply(individuals_v & population, const int& num) = 0;
 
 
     };

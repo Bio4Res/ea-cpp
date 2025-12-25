@@ -10,14 +10,14 @@ namespace ea {
     struct EntropyDiversity : public DiversityMeasure {
 
         double apply(const individuals_v & pop) override {
-            size_t n = pop[0]->getGenome()->length();
+            size_t n = pop[0].getGenome()->length();
             std::vector<std::unordered_map<int, int>> freq(n);
             for (size_t i = 0; i < n; i++)
                 freq[i] = std::unordered_map<int, int>();
             for (const auto& ind : pop) {
-                auto g = ind->getGenome();
+                auto g = ind.getGenome();
                 for (size_t i = 0; i < n; i++) {
-                    int v = std::get<int>(g->genes[i]);
+                    int v = g->genes[i].i;
                     auto& map = freq[i];
                     if (map.contains(v)) {
                         map[v] = (map[v] + 1);

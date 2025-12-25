@@ -47,9 +47,9 @@ namespace ea {
          */
         void sort(individuals_v & pop) {
         #ifdef EA_PARALLEL
-            std::sort(std::execution::par_unseq, pop.begin(), pop.end(), [this](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b) { return comparator(*a, *b); });
+            std::sort(std::execution::par_unseq, pop.begin(), pop.end(), [this](const Individual & a, const Individual & b) { return comparator(a, b); });
         #else
-            std::sort(std::execution::seq, pop.begin(), pop.end(), [this](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b) { return comparator(*a, *b); });       
+            std::sort(std::execution::seq, pop.begin(), pop.end(), [this](const Individual & a, const Individual & b) { return comparator(a, b); });       
         #endif
         }
         /**

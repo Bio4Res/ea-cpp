@@ -22,7 +22,7 @@ namespace ea {
             double c = 0.0;
             Genotype* g = i.getGenome();
             for (int j = 0; j < numvars; j++) {
-                const double v = std::get<double>(g->genes[j]);
+                const double v = g->genes[j].d;
                 c += v * v ;
             }
             return c;

@@ -16,12 +16,12 @@ namespace ea {
         friend std::ostream& operator<<(std::ostream& os, const BitFlip & indiv);
 
     protected:
-        std::unique_ptr<Individual> apply_(const individuals_v & parents) override {
-            auto ind = std::make_unique<Individual>(*parents[0]);
-            auto g = ind->getGenome();
+        Individual apply_(const individuals_v & parents) override {
+            auto ind = Individual(parents[0]);
+            auto g = ind.getGenome();
             auto pos = EAUtilRandom::instance().random(g->length());
-            g->genes[pos] = 1 - std::get<int>(g->genes[pos]);
-            ind->touch();
+            g->genes[pos].i = 1 - g->genes[pos].i;
+            ind.touch();
             return ind;
         }
 

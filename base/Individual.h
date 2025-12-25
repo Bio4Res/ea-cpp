@@ -18,7 +18,7 @@ namespace ea {
         /**
          * fitness of the individual
          */
-        double fitness;
+        double fitness = 0.0;
 
         /**
          * genotype of the individual
@@ -149,8 +149,8 @@ namespace ea {
         return os;
     }
 
-    using individuals_v = std::vector<std::shared_ptr<Individual>>;
-    using individuals_dq = std::deque<std::shared_ptr<Individual>>;
+    using individuals_v = std::vector<Individual>;
+    using individuals_dq = std::deque<Individual>;
 
     /**
      * comparator for maximization

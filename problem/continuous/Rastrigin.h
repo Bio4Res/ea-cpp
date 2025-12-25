@@ -26,7 +26,7 @@ namespace ea {
             double c = A * numvars;
             Genotype* g = i.getGenome();
             for (int j = 0; j < numvars; j++) {
-                const double v = std::get<double>(g->genes[j]);
+                const double v = g->genes[j].d;
                 c += v * v - A * std::cos(2.0 * std::numbers::pi * v);
             }
             return c;

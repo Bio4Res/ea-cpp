@@ -23,7 +23,7 @@ namespace ea {
             double s1 = 0.0;
             double s2 = 0.0;
             for (int j=0; j<numvars; j++) {
-                double v = std::get<double>(g->genes[j]);
+                double v = g->genes[j].d;
                 s1 += std::abs(v);
                 s2 += std::sin(v*v);
             }

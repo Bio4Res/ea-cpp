@@ -13,7 +13,7 @@ namespace ea {
          * @param offspring offspring population
          * @return the resulting population after replacement
          */
-        virtual std::unique_ptr<individuals_v> apply(individuals_v & population, individuals_v & offspring) = 0;
+        virtual individuals_v apply(individuals_v && population, individuals_v && offspring) = 0;
     };
 
 }

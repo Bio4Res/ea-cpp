@@ -38,7 +38,7 @@ namespace ea {
             double s2 = 0.0;
             Genotype* g = i.getGenome();
             for (int j = 0; j < numvars; j++) {
-                double v = std::get<double>(g->genes[j]);
+                double v = g->genes[j].d;
                 s1 += v * v;
                 s2 += std::cos(C * v);
             }

@@ -23,11 +23,11 @@ namespace ea {
         }
 
     protected:
-        std::unique_ptr<Individual> apply_(const individuals_v & parents) override {
-            const auto father = parents[0]->getGenome();
-            const auto mother = parents[1]->getGenome();
+        Individual apply_(const individuals_v & parents) override {
+            const auto father = parents[0].getGenome();
+            const auto mother = parents[1].getGenome();
             size_t l = father->length();
-            std::unique_ptr<Genotype> offspring = std::make_unique<Genotype>(l);
+            std::unique_ptr<Genotype> offspring = std::make_unique<Genotype>(l, GeneType::INT);
 
             for (size_t i = 0; i < l; ++i) {
                 if (EAUtilRandom::instance().random(2) > 0)
@@ -35,8 +35,8 @@ namespace ea {
                 else
                     offspring->genes[i] = mother->genes[i];
             }
-            std::unique_ptr<Individual> ind = std::make_unique<Individual>();
-            ind->setGenome(std::move(offspring));
+            Individual ind;
+            ind.setGenome(std::move(offspring));
             return ind;
         }
 

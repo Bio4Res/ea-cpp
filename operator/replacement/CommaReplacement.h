@@ -23,21 +23,21 @@ namespace ea {
              * @return the resulting population after replacement
              */
 
-        std::unique_ptr<individuals_v> apply(individuals_v & population, individuals_v & offspring) override {
+        individuals_v apply(individuals_v && population, individuals_v && offspring) override {
             size_t mu = population.size();
             size_t lambda = offspring.size();
             assert(lambda > 0);
             sort(offspring);
-            auto result = std::make_unique<individuals_v>();
-            result->reserve(mu);
+            individuals_v result;
+            result.reserve(mu);
             auto num = std::min(lambda, mu);
             for (size_t i = 0; i < num; i++)
-                result->push_back(offspring[i]);
+                result.push_back(std::move(offspring[i]));
             if (lambda < mu) {
                 sort(population);
                 num = mu - lambda;
                 for (size_t i = 0; i < num; i++) {
-                    result->push_back(population[i]);
+                    result.push_back(std::move(population[i]));
                 }
             }
             return result;

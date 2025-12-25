@@ -27,7 +27,7 @@ namespace ea {
             long c = 0;
             Genotype * g = i.getGenome();
             for (int j = 0; j < numvars; j++) {
-                c += std::get<int>(g->genes[j]);
+                c += g->genes[j].i;
             }
             return (double)c;
         }

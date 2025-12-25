@@ -44,7 +44,7 @@ namespace ea {
         /**
          * the population
          */
-        std::unique_ptr<individuals_v> population;
+        individuals_v population;
         /**
          * the replacement operator
          */
@@ -83,8 +83,7 @@ namespace ea {
         Island(int id, const config::IslandConfiguration& ic) : 
                 mu{ ic.popSize }, lambda{ ic.numOffspring }, maxEvals{ ic.maxEvals }{
             this->id = id;
-            population = std::make_unique<individuals_v>();
-            population->reserve(mu);
+            population.reserve(mu);
 
             // create operators
             selection = SelectionFactory::create(ic.selection.name, ic.selection.params);
@@ -142,7 +141,7 @@ namespace ea {
         * @return the population size
         */
         std::size_t getPopulationSize() {
-            return population->size();
+            return population.size();
         }
 
         /**
@@ -181,17 +180,17 @@ namespace ea {
             replace->newRun();
             migrate->newRun();
 
-            population->clear();
+            population.clear();
 
             auto placeholder = individuals_v{};
             for (int i = 0; i < mu; i++) {
-                std::unique_ptr<Individual> ind = initialization->apply(placeholder);
-                obj->evaluate(*ind);
-                population->push_back(std::move(ind));
+                auto ind = initialization->apply(placeholder);
+                obj->evaluate(ind);
+                population.push_back(std::move(ind));
                 
             }
             numEvals = mu;
-            stats->takeStats(obj->getEvals(), *population);
+            stats->takeStats(obj->getEvals(), population);
         }
 
         /**
@@ -207,42 +206,55 @@ namespace ea {
          * Performs an evolutionary cycle on the island
          * @return true if the island remains active
          */
-        bool stepUp() {
+       bool stepUp() {
 
             if (obj->getEvals() < maxEvals) {
                 // immigration ----------------------------------------------------
-                population = migrate->receive(*population);
+                population = migrate->receive(std::move(population));
+                
                 // selection ------------------------------------------------------
-                auto offspring = selection->apply(*population, poolSize);
+                auto offspring = selection->apply(population, poolSize);
+                
                 // reproduction ---------------------------------------------------
                 for (auto & op : variationOps) {
                     int a = op->getArity();
-                    int m = static_cast<int>(offspring->size()) / a;
+                    int m = static_cast<int>(offspring.size()) / a;
                     
-                    auto stage = std::make_unique<individuals_v>(m,nullptr); //de m elementos
-                    auto parents = std::make_unique<individuals_v>(a,nullptr); //de a elementos
+                    individuals_v stage;
+                    stage.reserve(m);  // reservo memoria sin crear individuos
                     
-                    int offspring_counter = 0;
+                    individuals_v parents;
+                    parents.reserve(a);
+                    
                     for (int j = 0; j < m; j++) {
+                        parents.clear();  //para reutilizarlo
+                        
                         for (int i = 0; i < a; i++) {
-                            (*parents)[i] = (*offspring)[offspring_counter++];
+                            int idx = j * a + i; //precalculo el incide para usar emplace_back()
+                            parents.emplace_back(std::move(offspring[idx]));  //optimizado!
                         }
-                        (*stage)[j] = op->apply(*parents);
+                        
+                        stage.emplace_back(op->apply(parents));
                     }
-                    offspring = std::move(stage);
+                    
+                    offspring = std::move(stage);  //optimizado!
                 }
+                
                 // evaluate new individuals ---------------------------------------
-                for (const auto & i : *offspring) {
-                    if (!i->isEvaluated())
+                for (auto & i : offspring) {
+                    if (!i.isEvaluated())
                         numEvals++;
-                    obj->evaluate(*i);
+                    obj->evaluate(i);
                 }
+                
                 // apply replacement ----------------------------------------------
-                population = replace->apply(*population, *offspring);
+                population = replace->apply(std::move(population), std::move(offspring));
+                
                 // emigration ----------------------------------------------------
-                migrate->send(*population);
+                migrate->send(population);
+                
                 // take stats -----------------------------------------------------
-                stats->takeStats(obj->getEvals(), *population);
+                stats->takeStats(obj->getEvals(), population);
             }
             return isActive();
         }
@@ -260,9 +272,9 @@ namespace ea {
 
     std::ostream& operator<<(std::ostream& os, const Island& island){
         os << "{\n\tnumevals: " << island.numEvals << ",\n\tpopulation: [\n" <<
-        "\t\t" << island.population->at(0); // .replace("\n", "\n\t\t");
+        "\t\t" << island.population.at(0); // .replace("\n", "\n\t\t");
         for (int i = 1; i < island.mu; i++)
-            os << ",\n\t\t" << island.population->at(i); // .replace("\n", "\n\t\t");
+            os << ",\n\t\t" << island.population.at(i); // .replace("\n", "\n\t\t");
         os << "\n\t]\n}";
         return os;
     }

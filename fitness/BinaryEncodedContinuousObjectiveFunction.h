@@ -40,7 +40,7 @@ public:
 		bits = bitsPerVar;
 		func = cof;
 		numContVars = cof->numvars;
-		std::unique_ptr<Genotype> g = std::make_unique<Genotype>(numContVars);
+		std::unique_ptr<Genotype> g = std::make_unique<Genotype>(numContVars, GeneType::DOUBLE);
 		aux = std::make_unique<Individual>();
 		aux->setGenome(std::move(g));
 		maxval = 0;
@@ -60,9 +60,9 @@ protected:
 			long val = 0;
 			for (int k = 0; k < bits; k++) {
 				val <<= 1;
-				val += std::get<int>(g0->genes[j + k]);
+				val += g0->genes[j + k].i;
 			}
-			gaux->genes[i] = (double)val / (double)maxval * (func->getMaxVal(i) - func->getMinVal(i)) + func->getMinVal(i);
+			gaux->genes[i].d = (double)val / (double)maxval * (func->getMaxVal(i) - func->getMinVal(i)) + func->getMinVal(i);
 		}
 		aux->touch();
 		return func->evaluate(*aux);

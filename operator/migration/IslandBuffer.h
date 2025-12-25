@@ -11,23 +11,29 @@ namespace ea {
         /**
          * Internal list of individuals
          */
-        std::unique_ptr<individuals_dq> buffer;
+        individuals_dq buffer;
     public:
-        IslandBuffer() {
-            buffer = std::make_unique<individuals_dq>();
-        }
+        IslandBuffer() = default;
+
         /**
          * Clears the buffer
          */
         void newRun() {
-            buffer->clear();
+            buffer.clear();
         }
         /**
          * Returns the size of the buffer
          * @return the size of the buffer
          */
-        std::size_t size() {
-            return buffer->size();
+        std::size_t size() const {
+            return buffer.size();
+        }
+
+        /**
+         * Checks if buffer is empty
+         */
+        bool empty() const {
+            return buffer.empty();
         }
 
         /**
@@ -39,7 +45,12 @@ namespace ea {
          * @return true iff the individual could be inserted
          */
         bool add(Individual& ind) {
-            buffer->push_back(std::make_shared<Individual>(ind));
+            buffer.push_back(ind);
+            return true;
+        }
+        
+        bool add(Individual&& ind) {
+            buffer.push_back(std::move(ind));
             return true;
         }
 
@@ -51,11 +62,11 @@ namespace ea {
          * @param pop the individuals to be inserted
          * @return true iff the individuals could be inserted
          */
-        bool add(const std::unique_ptr<individuals_v>& pop) {
-            bool ok = true;
-
-            buffer->insert(buffer->end(), pop->begin(), pop->end());
-            return ok;
+        bool add(individuals_v && pop) {            
+            for (auto& ind : pop) {
+                buffer.push_back(std::move(ind));
+            }
+            return true;
         }
         /**
          * Extracts the oldest individual in the buffer.
@@ -63,18 +74,11 @@ namespace ea {
          * in the buffer.
          * @return the oldest individual in the buffer
          */
-        std::shared_ptr<Individual> get() {
-            Individual ind;
-            if (buffer->size() > 0) {
-                auto & ind = buffer->front();
-                buffer->pop_front();
-                return ind;
-            }
-            else {
-                assert(false);
-                return nullptr;
-
-            }
+        Individual get() {
+            assert(buffer.size() > 0);
+            Individual ind = std::move(buffer.front());
+            buffer.pop_front();
+            return ind;
         }
 
         /**
@@ -83,31 +87,24 @@ namespace ea {
          * @return a list of all individuals in the buffer
          */
         std::unique_ptr<individuals_v> getAll() {
-            auto migrants = std::make_unique<individuals_v>(buffer->begin(), buffer->end());
-            buffer->clear();
+            auto migrants = std::make_unique<individuals_v>();
+            migrants->reserve(buffer.size());
+            
+            for (auto & ind : buffer) {
+                migrants->push_back(std::move(ind));
+            }
+            
+            buffer.clear();
             return migrants;
-            // 
-            //std::deque<Individual*>* migrants = new std::deque<Individual*>(std::move(*buffer));
-            //List<Individual> migrants = new LinkedList<Individual>(buffer);
-            //return migrants;
         }
 
         friend std::ostream& operator<<(std::ostream& os, const IslandBuffer& ib);
-        /*
-        std::string toString() {
-            std::string str = "Buffer : ";
-            for (auto& elem : *buffer) {
-                str += elem.toString();
-                str += " ";
-            }
-            return str;
-        }
-        */
+
     };
 
     std::ostream& operator<<(std::ostream& os, const IslandBuffer& ib){
             os << "Buffer : ";
-            for (const auto & elem : *(ib.buffer)) {
+            for (const auto & elem : ib.buffer) {
                 os << elem << " ";
             }
         return os;

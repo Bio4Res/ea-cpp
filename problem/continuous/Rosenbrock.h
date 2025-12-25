@@ -24,8 +24,8 @@ namespace ea {
             double c = 0.0;
             Genotype* g = i.getGenome();
             for (int j = 1; j < numvars; j++) {
-                double v1 = std::get<double>(g->genes[j - 1]);
-                double v2 = std::get<double>(g->genes[j]);
+                double v1 = g->genes[j - 1].d;
+                double v2 = g->genes[j].d;
                 double t1 = v2 - v1 * v1;
                 double t2 = 1 - v1;
                 c += A * t1 * t1 + t2 * t2;
