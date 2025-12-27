@@ -31,7 +31,7 @@ using json = nlohmann::json;
 
 ENUM(enumObjectiveFunctionType, int, ONEMAX, TRAP, MMDP, LEADING_ONES, TSP, LOP, SPHERE, BIN_SPHERE, ES_ESPHERE, ACKLEY, RASTRIGIN, ROSENBROCK, GRIEWANK, SCHAFFER2, SCHWEFEL, SOLOMON, XINSHEYANG2)
 
-std::shared_ptr<ea::ObjectiveFunction> create(std::string &problem, const int & arg1, const double & arg2 ) {
+std::unique_ptr<ea::ObjectiveFunction> create(std::string &problem, const int & arg1, const double & arg2 ) {
 
     size_t found = problem.find('-', 0);
     if (found != std::string::npos)
@@ -40,26 +40,26 @@ std::shared_ptr<ea::ObjectiveFunction> create(std::string &problem, const int & 
     switch (enumObjectiveFunctionType::_from_string_nocase(problem.c_str())) {
 
     case enumObjectiveFunctionType::ONEMAX:
-        return  std::make_shared <ea::OneMax>(arg1);
+        return  std::make_unique <ea::OneMax>(arg1);
     case enumObjectiveFunctionType::ACKLEY:
-        return std::make_shared <ea::Ackley>(arg1, arg2);
+        return std::make_unique <ea::Ackley>(arg1, arg2);
     case enumObjectiveFunctionType::RASTRIGIN:
-        return std::make_shared <ea::Rastrigin>(arg1, arg2);
+        return std::make_unique <ea::Rastrigin>(arg1, arg2);
     case enumObjectiveFunctionType::ROSENBROCK:
-        return std::make_shared <ea::Rosenbrock>(arg1, arg2);
+        return std::make_unique <ea::Rosenbrock>(arg1, arg2);
     case enumObjectiveFunctionType::SPHERE:
-        return std::make_shared <ea::Sphere>(arg1, arg2);
+        return std::make_unique <ea::Sphere>(arg1, arg2);
 
-        case enumObjectiveFunctionType::GRIEWANK:
-        return std::make_shared <ea::Griewank>(arg1, arg2);
-        case enumObjectiveFunctionType::SCHAFFER2:
-        return std::make_shared <ea::Schaffer2>(arg1, arg2);
-        case enumObjectiveFunctionType::SCHWEFEL:
-        return std::make_shared <ea::Schwefel>(arg1, arg2);
-        case enumObjectiveFunctionType::SOLOMON:
-        return std::make_shared <ea::Solomon>(arg1, arg2);
-        case enumObjectiveFunctionType::XINSHEYANG2:
-        return std::make_shared <ea::XinSheYang2>(arg1, arg2);
+    case enumObjectiveFunctionType::GRIEWANK:
+        return std::make_unique <ea::Griewank>(arg1, arg2);
+    case enumObjectiveFunctionType::SCHAFFER2:
+        return std::make_unique <ea::Schaffer2>(arg1, arg2);
+    case enumObjectiveFunctionType::SCHWEFEL:
+        return std::make_unique <ea::Schwefel>(arg1, arg2);
+    case enumObjectiveFunctionType::SOLOMON:
+        return std::make_unique <ea::Solomon>(arg1, arg2);
+    case enumObjectiveFunctionType::XINSHEYANG2:
+        return std::make_unique <ea::XinSheYang2>(arg1, arg2);
 
         /*
             case enumObjectiveFunctionType::TRAP:
@@ -263,12 +263,17 @@ int main(int argc, char* argv[]) {
         ea::EvolutionaryAlgorithm myEA(conf);
         auto cf  = create(experiment.problem, experiment.numvars, experiment.range);
         if (experiment.numbits > 0) {
-            auto cf_cast = std::dynamic_pointer_cast<ea::ContinuousObjectiveFunction>(cf);
-            myEA.setObjectiveFunction(std::make_shared<ea::BinaryEncodedContinuousObjectiveFunction>(experiment.numbits, cf_cast));
+            ea::ContinuousObjectiveFunction * cf_cast = dynamic_cast<ea::ContinuousObjectiveFunction *>(cf.get());
+            if(cf_cast)
+                cf.release();
+            else
+                throw std::runtime_error("Function must be continuous for binary encoding");
+            auto unique_cf_cast = std::unique_ptr<ea::ContinuousObjectiveFunction>(cf_cast);
+            myEA.setObjectiveFunction(std::make_unique<ea::BinaryEncodedContinuousObjectiveFunction>(experiment.numbits, std::move(unique_cf_cast)));
             myEA.stats.setDiversityMeasure(std::make_unique<ea::EntropyDiversity>());
         }
         else {
-            myEA.setObjectiveFunction(cf);
+            myEA.setObjectiveFunction(std::move(cf));
             myEA.stats.setDiversityMeasure(std::make_unique<ea::VarianceDiversity>());
         }
 

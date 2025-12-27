@@ -9,6 +9,7 @@ namespace ea {
     struct GaussianMutation : public MutationOperator {
     private:
         double stepsize;
+        ContinuousObjectiveFunction * continuous_obj;
     public:
         /**
          * Creates the operator.
@@ -20,12 +21,19 @@ namespace ea {
             else
                 stepsize = 1.0;
         }
+
+        void setObjectiveFunction(ObjectiveFunction* obj) override {
+            MutationOperator::setObjectiveFunction(obj);
+            continuous_obj = dynamic_cast<ContinuousObjectiveFunction*>(obj);
+            if (!continuous_obj) {
+                throw std::runtime_error("This operator requires a ContinuousObjectiveFunction");
+            }
+        }
         
         friend std::ostream& operator<<(std::ostream& os, const GaussianMutation & indiv);
 
     protected:
         Individual apply_(const individuals_v& parents) override {
-            auto p = std::dynamic_pointer_cast<ContinuousObjectiveFunction>(obj);
             auto ind = Individual(parents[0]);
             auto g = ind.getGenome();
             auto pos = EAUtilRandom::instance().random(g->length());
@@ -33,7 +41,7 @@ namespace ea {
             double v = g->genes[pos].d;
             double val = v * (1.0 + stepsize * EAUtilRandom::instance().nrandom());
 
-            g->genes[pos].d = std::min(p->getMaxVal(pos), std::max(p->getMinVal(pos), val));
+            g->genes[pos].d = std::min(continuous_obj->getMaxVal(pos), std::max(continuous_obj->getMinVal(pos), val));
             ind.touch();
             return ind;
         }

@@ -32,7 +32,7 @@ namespace ea {
         /**
          * The objective function being optimized
          */
-        std::shared_ptr<ObjectiveFunction> obj{ nullptr };
+        ObjectiveFunction * obj{ nullptr };
         /**
          * number of evaluations so far in the current island
          */
@@ -118,7 +118,7 @@ namespace ea {
          * Sets the objective function to be optimized
          * @param obj the objective function to be optimized
          */
-        void setObjectiveFunction(std::shared_ptr<ObjectiveFunction> theobjf) {
+        void setObjectiveFunction(ObjectiveFunction * theobjf) {
             obj = theobjf;
             initialization->setObjectiveFunction(obj);
             selection->setObjectiveFunction(obj);

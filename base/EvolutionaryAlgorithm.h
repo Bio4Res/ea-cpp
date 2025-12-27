@@ -25,7 +25,7 @@ namespace ea {
         /**
          * the objective function
          */
-        std::shared_ptr<ObjectiveFunction> obj;
+        std::unique_ptr<ObjectiveFunction> obj{nullptr};
         /**
          * current seed for the RNG
          */
@@ -78,10 +78,10 @@ namespace ea {
          * Sets the objective function used by the EA
          * @param obj the objective function used by the EA
          */
-        void setObjectiveFunction(std::shared_ptr<ObjectiveFunction> obj) {
-            this->obj = obj;
+        void setObjectiveFunction(std::unique_ptr<ObjectiveFunction> theobjf) {
+            this->obj = std::move(theobjf);
             for (auto& i : islands)
-                i->setObjectiveFunction(obj);
+                i->setObjectiveFunction(obj.get());
             stats.setComparator(obj->getComparator());
         }
 

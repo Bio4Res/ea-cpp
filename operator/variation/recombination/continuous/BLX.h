@@ -9,6 +9,7 @@ namespace ea {
     struct BLX : public RecombinationOperator {
     private:
         double alpha;
+        ContinuousObjectiveFunction * continuous_obj;
     public:
         /**
          * Generates the operator
@@ -22,12 +23,19 @@ namespace ea {
             return 2;
         }
 
+        void setObjectiveFunction(ObjectiveFunction* obj) override {
+            RecombinationOperator::setObjectiveFunction(obj);
+            continuous_obj = dynamic_cast<ContinuousObjectiveFunction*>(obj);
+            if (!continuous_obj) {
+                throw std::runtime_error("This operator requires a ContinuousObjectiveFunction");
+            }
+        }
+
         friend std::ostream& operator<<(std::ostream& os, const BLX& op);
     protected:
         Individual apply_(const individuals_v& parents) override {
             const auto father = parents[0].getGenome();
             const auto mother = parents[1].getGenome();
-            auto p = std::dynamic_pointer_cast<ContinuousObjectiveFunction>(obj);
             size_t l = father->length();
             std::unique_ptr<Genotype> offspring = std::make_unique<Genotype>(l, GeneType::DOUBLE);
 
@@ -39,7 +47,7 @@ namespace ea {
                 double interval = maxval - minval;
                 double explore = alpha * interval;
                 double val = minval - explore + EAUtilRandom::instance().random01() * (interval + 2.0 * explore);
-                offspring->genes[i].d = std::min(p->getMaxVal(i), std::max(p->getMinVal(i), val));
+                offspring->genes[i].d = std::min(continuous_obj->getMaxVal(i), std::max(continuous_obj->getMinVal(i), val));
             }
             Individual ind;
             ind.setGenome(std::move(offspring));

@@ -10,7 +10,7 @@ private:
 	/**
 	 * the continuous objective function to be optimized
 	 */
-	std::shared_ptr<ContinuousObjectiveFunction> func;
+	std::unique_ptr<ContinuousObjectiveFunction> func;
 	/**
 	 * number of bits to encode each continuous variable
 	 */
@@ -26,7 +26,7 @@ private:
 	/**
 	 * auxiliary individual to make the translation from binary to continuous
 	 */
-	std::unique_ptr<Individual> aux;
+	Individual aux;
 
 	/**
 	 * Creates the shell for a function, indicating the number of bits to be used for encoding each
@@ -35,14 +35,13 @@ private:
 	 * @param cof a continuous objective function
 	 */
 public:
-	BinaryEncodedContinuousObjectiveFunction(int bitsPerVar, std::shared_ptr<ContinuousObjectiveFunction> cof)
+	BinaryEncodedContinuousObjectiveFunction(int bitsPerVar, std::unique_ptr<ContinuousObjectiveFunction> cof)
 		: DiscreteObjectiveFunction(bitsPerVar * cof->numvars, 2){
 		bits = bitsPerVar;
-		func = cof;
+		func = std::move(cof);
 		numContVars = cof->numvars;
 		std::unique_ptr<Genotype> g = std::make_unique<Genotype>(numContVars, GeneType::DOUBLE);
-		aux = std::make_unique<Individual>();
-		aux->setGenome(std::move(g));
+		aux.setGenome(std::move(g));
 		maxval = 0;
 		for (int i = 0; i < bits; i++)
 			maxval = (maxval << 1) + 1;
@@ -55,7 +54,7 @@ public:
 protected:
 		double evaluate_(Individual & ind) override{
 		Genotype * g0 = ind.getGenome();
-		Genotype * gaux = aux->getGenome();
+		Genotype * gaux = aux.getGenome();
 		for (int i = 0, j = 0; i < numContVars; i++, j += bits) {
 			long val = 0;
 			for (int k = 0; k < bits; k++) {
@@ -64,8 +63,8 @@ protected:
 			}
 			gaux->genes[i].d = (double)val / (double)maxval * (func->getMaxVal(i) - func->getMinVal(i)) + func->getMinVal(i);
 		}
-		aux->touch();
-		return func->evaluate(*aux);
+		aux.touch();
+		return func->evaluate(aux);
 	}
 
 };

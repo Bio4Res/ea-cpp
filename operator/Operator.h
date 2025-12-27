@@ -22,7 +22,7 @@ namespace ea {
         /**
          * the objective function (for potential use)
          */
-        std::shared_ptr<ObjectiveFunction> obj = nullptr;
+        ObjectiveFunction* obj = nullptr;
 
 
         /**
@@ -36,8 +36,8 @@ namespace ea {
          * Sets the objective function for potential use inside some operator
          * @param obj the objective function
          */
-        void setObjectiveFunction(const std::shared_ptr<ObjectiveFunction>& obj) {
-            this->obj = obj;
+        virtual void setObjectiveFunction(ObjectiveFunction * theobjf) {
+            this->obj = theobjf;
             setComparator(obj->getComparator());
         }
 
@@ -45,13 +45,14 @@ namespace ea {
          * Sorts a list of individuals
          * @param pop a list of individuals
          */
-        void sort(individuals_v & pop) {
+        inline void sort(individuals_v & pop) {
         #ifdef EA_PARALLEL
             std::sort(std::execution::par_unseq, pop.begin(), pop.end(), [this](const Individual & a, const Individual & b) { return comparator(a, b); });
         #else
             std::sort(std::execution::seq, pop.begin(), pop.end(), [this](const Individual & a, const Individual & b) { return comparator(a, b); });       
         #endif
         }
+
         /**
          * Performs whatever actions are required at the beginning of a run
          */

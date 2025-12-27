@@ -34,8 +34,8 @@ namespace ea {
             for (size_t i = 0; i < num; i++)
                 result.push_back(std::move(offspring[i]));
             if (lambda < mu) {
-                sort(population);
                 num = mu - lambda;
+                sort(population);
                 for (size_t i = 0; i < num; i++) {
                     result.push_back(std::move(population[i]));
                 }

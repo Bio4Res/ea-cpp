@@ -57,12 +57,12 @@ namespace ea {
          * Sets the objective function for potential use inside some operator
          * @param obj the objective function
          */
-        void setObjectiveFunction(std::shared_ptr<ObjectiveFunction> obj) {
-            Operator::setObjectiveFunction(obj);
+        void setObjectiveFunction(ObjectiveFunction * theobjf) override{
+            Operator::setObjectiveFunction(theobjf);
             if (emigrate != nullptr)
-                emigrate->setObjectiveFunction(obj);
+                emigrate->setObjectiveFunction(theobjf);
             if (immigrate != nullptr)
-                immigrate->setObjectiveFunction(obj);
+                immigrate->setObjectiveFunction(theobjf);
         }
 
         /**
