@@ -9,7 +9,7 @@ namespace ea {
         /**
          * statistics of every island
          */
-        std::vector<std::shared_ptr<Island>>& islands;
+        std::vector<Island>& islands;
         /**
          * list of seeds used in each run
          */
@@ -37,14 +37,14 @@ namespace ea {
          * Creates statistics for a collection of islands
          * @param islands the islands whose statistics will be collected.
          */
-        EAStatistics(std::vector<std::shared_ptr<Island>>& theislands) : islands(theislands) {
+        EAStatistics(std::vector<Island>& theislands) : islands(theislands) {
 
         }
 
 
         void clear() override {
-            for (const auto& i : islands) {
-                i->getStatistics()->clear();
+            for (auto & i : islands) {
+                i.getStatistics()->clear();
             }
             seeds.clear();
             runtime.clear();
@@ -54,23 +54,23 @@ namespace ea {
 
         void setComparator(std::function<bool(const Individual&, const Individual&)> comparator) override {
             Statistics::setComparator(comparator);
-            for (auto& i : islands) {
-                i->getStatistics()->setComparator(comparator);
+            for (auto & i : islands) {
+                i.getStatistics()->setComparator(comparator);
             }
         }
 
         void setDiversityMeasure(std::shared_ptr<DiversityMeasure> d) override {
             Statistics::setDiversityMeasure(d);
-            for (auto& i : islands) {
-                i->getStatistics()->setDiversityMeasure(d);
+            for (auto & i : islands) {
+                i.getStatistics()->setDiversityMeasure(d);
             }
         }
 
         void closeRun() override {
             if (runActive) {
                 seeds.push_back(currentSeed);
-                for (auto& i : islands)
-                    i->getStatistics()->closeRun();
+                for (auto & i : islands)
+                    i.getStatistics()->closeRun();
 
                 toc = std::chrono::steady_clock::now();
                 std::chrono::duration<double> diff = toc - tic;
@@ -83,10 +83,9 @@ namespace ea {
             if (runActive)
                 closeRun();
             currentSeed = EAUtilRandom::instance().getSeed();
-            for (auto& i : islands)
-                i->getStatistics()->newRun();
+            for (auto & i : islands)
+                i.getStatistics()->newRun();
             runActive = true;
-            //tic = System.nanoTime();
             tic = std::chrono::steady_clock::now();
 
         }
@@ -98,7 +97,7 @@ namespace ea {
             mijson["time"] = runtime.at(i);
             json jsondata = json::array();
             for (auto & island : islands)
-                jsondata.push_back(island->getStatistics()->toJSON(i));
+                jsondata.push_back(island.getStatistics()->toJSON(i));
             mijson["rundata"] = jsondata;
             return mijson;
         }
@@ -122,9 +121,9 @@ namespace ea {
 
         Individual& getBest(int i) override {
             size_t n = islands.size();
-            auto& best = islands.at(0)->getStatistics()->getBest(i);
+            auto& best = islands[0].getStatistics()->getBest(i);
             for (size_t j = 1; j < n; j++) {
-                auto& cand = islands.at(j)->getStatistics()->getBest(i);
+                auto& cand = islands[j].getStatistics()->getBest(i);
                 //if (comparator(cand, best) < 0)
                 if (comparator(cand, best))
                     best = cand;

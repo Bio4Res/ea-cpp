@@ -11,17 +11,17 @@ namespace ea {
 
     struct EvolutionaryAlgorithm {
         /**
-        * islands in the EA
+        * Islands in the EA
         */
-        std::vector<std::shared_ptr<Island>> islands;
+        std::vector<Island> islands;
         /**
-         * List of active islands
+         * The active islands
          */
-        std::deque<std::shared_ptr<Island>> active;
+        std::vector<Island *> active;
         /**
-         * List of inactive islands
+         * The inactive islands
          */
-        std::deque<std::shared_ptr<Island>> inactive;
+        std::vector<Island *> inactive;
         /**
          * the objective function
          */
@@ -54,12 +54,13 @@ namespace ea {
          * Creates an EA given a certain configuration
          * @param conf configuration of the EA
          */
-        EvolutionaryAlgorithm(config::EAConfiguration& conf) : islands(conf.getNumIslands()), stats(islands), configuration(conf) {
-            obj = nullptr;
+        EvolutionaryAlgorithm(config::EAConfiguration& conf) : stats(islands), configuration(conf) {
             int n = conf.getNumIslands();
-            //islands.reserve(n);
+            islands.reserve(n);
+            active.reserve(n);
+            inactive.reserve(n);
             for (int i = 0; i < n; i++) {
-                islands[i] = std::make_shared<Island>(i, conf.getIslandConfiguration(i));
+                islands.emplace_back(i, conf.getIslandConfiguration(i));
             }
             baseSeed = conf.seed;
             seed = baseSeed;
@@ -70,8 +71,6 @@ namespace ea {
         }
 
         ~EvolutionaryAlgorithm() {
-            //JES CHECK ME: topology y stats se borran por ser unique_ptr 
-            //std::for_each(islands.begin(), islands.end(), [](auto* elem) { delete elem; });
         }
 
         /**
@@ -81,7 +80,7 @@ namespace ea {
         void setObjectiveFunction(std::unique_ptr<ObjectiveFunction> theobjf) {
             this->obj = std::move(theobjf);
             for (auto& i : islands)
-                i->setObjectiveFunction(obj.get());
+                i.setObjectiveFunction(obj.get());
             stats.setComparator(obj->getComparator());
         }
 
@@ -92,8 +91,8 @@ namespace ea {
          */
         Island & getIslandByID(int id) {
             for (auto & i : islands) {
-                if (i->getID() == id)
-                    return *i;
+                if (i.getID() == id)
+                    return i;
             }
             //assert(false);
             throw std::runtime_error("No Island with provided id");
@@ -109,21 +108,22 @@ namespace ea {
 
             if ((topology == nullptr) || (topology->isRegenerable())) {
                 topology = TopologyFactory::create(configuration.topology.name, configuration.topology.params);
-                for (const auto& i : islands) {
-                    i->resetConnections();
-                    auto links = topology->get(i->getID());
+                for (auto & i : islands) {
+                    i.resetConnections();
+                    auto links = topology->get(i.getID());
                     for (const int& id : *links)
-                        i->connect(getIslandByID(id));
+                        i.connect(getIslandByID(id));
                 }
             }
 
-
-            for (const auto& i : islands) {
-                i->initializeIsland();
-                if (i->isActive())
-                    active.push_back(i);
+            active.clear();
+            inactive.clear();
+            for (auto & i : islands) {
+                i.initializeIsland();
+                if (i.isActive())
+                    active.push_back(&i);
                 else
-                    inactive.push_back(i);
+                    inactive.push_back(&i);
             }
         }
 
@@ -133,8 +133,8 @@ namespace ea {
          * @return true if some island(s) remain(s) active
          */
         bool stepUp() {
-            for (int k = 0; k < (int)active.size(); ) {
-                const auto& i = active[k];
+            for (size_t k = 0; k < active.size(); ) {
+                Island * i = active[k];
                 if (!i->stepUp()) {
                     active.erase(active.begin() + k);
                     inactive.push_back(i);
@@ -143,7 +143,7 @@ namespace ea {
                     k++;
             }
 
-            if (active.size() == 0) {
+            if (active.empty()) {
                 stats.closeRun();
                 return false;
             }

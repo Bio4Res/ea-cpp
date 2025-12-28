@@ -74,7 +74,7 @@ namespace ea {
         /**
          * Migration operator
          */
-        std::shared_ptr<MigrationOperator> migrate;
+        std::unique_ptr<MigrationOperator> migrate;
         /**
          * Creates an island with a given configuration
          * @param id the island ID
@@ -89,7 +89,6 @@ namespace ea {
             selection = SelectionFactory::create(ic.selection.name, ic.selection.params);
             replace = ReplacementFactory::create(ic.replacement.name, ic.replacement.params);
             size_t numOps = ic.variationOps.size();
-            //auto x = variationOps.get_allocator().allocate(numOps);
             variationOps.reserve(numOps);
 
             initialization = VariationFactory::create(ic.variationOps[0].name, ic.variationOps[0].params);

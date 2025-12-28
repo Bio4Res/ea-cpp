@@ -7,7 +7,8 @@ namespace ea {
 
 		double apply(const individuals_v & pop) override{
 			size_t n = pop.at(0).getGenome()->length();
-			int mu = static_cast<int>(pop.size());
+			//int mu = static_cast<int>(pop.size());
+			size_t mu = pop.size();
 
 			double sigma = 0;
 			for (size_t i = 0; i < n; i++) {
