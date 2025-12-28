@@ -23,11 +23,11 @@ namespace ea {
         /**
          * operator to select which individuals to migrate
          */
-        std::shared_ptr<SelectionOperator> emigrate;
+        std::unique_ptr<SelectionOperator> emigrate;
         /**
          * operator to select how to deal with incoming individuals
          */
-        std::shared_ptr<ReplacementOperator> immigrate;
+        std::unique_ptr<ReplacementOperator> immigrate;
         /**
          * input buffer of the current island
          */
@@ -44,9 +44,9 @@ namespace ea {
          * @param freq frequency of migration
          * @param num number of individuals to migrate
          */
-        MigrationOperator(std::shared_ptr<SelectionOperator> out, std::shared_ptr<ReplacementOperator> in, int freq, int num) : Operator() {
-            emigrate = out;
-            immigrate = in;
+        MigrationOperator(std::unique_ptr<SelectionOperator> out, std::unique_ptr<ReplacementOperator> in, int freq, int num) : Operator() {
+            emigrate = std::move(out);
+            immigrate = std::move(in);
             frequency = freq;
             numIndividuals = num;
             buffer = std::make_shared<IslandBuffer>();

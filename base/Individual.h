@@ -152,37 +152,12 @@ namespace ea {
     using individuals_v = std::vector<Individual>;
     using individuals_dq = std::deque<Individual>;
 
-    /**
-     * comparator for maximization
-     */
-     /*
-     auto maxComp = [](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b)->int {
-         if (std::abs(a->getFitness() - b->getFitness()) < 1e-9) {
-             return 0;
-         }
-         else if (b->getFitness() < a->getFitness())
-             return -1;
-         return 1;
-     };
-     */
-
     auto maxComp = [](const Individual& a, const Individual& b) {
         return(b.getFitness() < a.getFitness());
     };
 
     /**
      * comparator for minimization
-     */
-
-     /*
-     auto minComp = [](const std::shared_ptr<Individual> & a, const std::shared_ptr<Individual> & b)->int {
-         if (std::abs(a->getFitness() - b->getFitness()) < 1e-9) {
-             return 0;
-         }
-         else if (a->getFitness() < b->getFitness())
-             return -1;
-         return 1;
-     };
      */
 
     auto minComp = [](const Individual& a, const Individual& b) {

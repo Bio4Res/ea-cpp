@@ -19,10 +19,10 @@ namespace ea {
          * @return the so-configured migration operator
          */
         static std::unique_ptr<MigrationOperator> create(int freq, int num, const std::string& outgoing, const std::vector<std::string>& outPars, const std::string& incoming, const std::vector<std::string>& inPars) {
-            std::shared_ptr<SelectionOperator> sel = (outgoing != "") ? SelectionFactory::create(outgoing, outPars) : nullptr;
-            std::shared_ptr<ReplacementOperator> rep = (incoming != "") ? ReplacementFactory::create(incoming, inPars) : nullptr;
+            std::unique_ptr<SelectionOperator> sel = (outgoing != "") ? SelectionFactory::create(outgoing, outPars) : nullptr;
+            std::unique_ptr<ReplacementOperator> rep = (incoming != "") ? ReplacementFactory::create(incoming, inPars) : nullptr;
 
-            return std::make_unique<MigrationOperator>(sel, rep, freq, num);
+            return std::make_unique<MigrationOperator>(std::move(sel), std::move(rep), freq, num);
         }
 
     };

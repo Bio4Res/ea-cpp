@@ -44,7 +44,7 @@ namespace ea {
 
         void clear() override {
             for (auto & i : islands) {
-                i.getStatistics()->clear();
+                i.getStatistics().clear();
             }
             seeds.clear();
             runtime.clear();
@@ -55,14 +55,14 @@ namespace ea {
         void setComparator(std::function<bool(const Individual&, const Individual&)> comparator) override {
             Statistics::setComparator(comparator);
             for (auto & i : islands) {
-                i.getStatistics()->setComparator(comparator);
+                i.getStatistics().setComparator(comparator);
             }
         }
 
         void setDiversityMeasure(DiversityMeasure * dm) override {
             Statistics::setDiversityMeasure(dm);
             for (auto & i : islands) {
-                i.getStatistics()->setDiversityMeasure(dm);
+                i.getStatistics().setDiversityMeasure(dm);
             }
         }
 
@@ -70,7 +70,7 @@ namespace ea {
             if (runActive) {
                 seeds.push_back(currentSeed);
                 for (auto & i : islands)
-                    i.getStatistics()->closeRun();
+                    i.getStatistics().closeRun();
 
                 toc = std::chrono::steady_clock::now();
                 std::chrono::duration<double> diff = toc - tic;
@@ -84,7 +84,7 @@ namespace ea {
                 closeRun();
             currentSeed = EAUtilRandom::instance().getSeed();
             for (auto & i : islands)
-                i.getStatistics()->newRun();
+                i.getStatistics().newRun();
             runActive = true;
             tic = std::chrono::steady_clock::now();
 
@@ -97,7 +97,7 @@ namespace ea {
             mijson["time"] = runtime.at(i);
             json jsondata = json::array();
             for (auto & island : islands)
-                jsondata.push_back(island.getStatistics()->toJSON(i));
+                jsondata.push_back(island.getStatistics().toJSON(i));
             mijson["rundata"] = jsondata;
             return mijson;
         }
@@ -121,9 +121,9 @@ namespace ea {
 
         Individual& getBest(int i) override {
             size_t n = islands.size();
-            auto& best = islands[0].getStatistics()->getBest(i);
+            auto& best = islands[0].getStatistics().getBest(i);
             for (size_t j = 1; j < n; j++) {
-                auto& cand = islands[j].getStatistics()->getBest(i);
+                auto& cand = islands[j].getStatistics().getBest(i);
                 //if (comparator(cand, best) < 0)
                 if (comparator(cand, best))
                     best = cand;

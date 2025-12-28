@@ -70,7 +70,7 @@ namespace ea {
         /**
          * statistics
          */
-        std::shared_ptr<IslandStatistics> stats = nullptr;
+        IslandStatistics stats;
         /**
          * Migration operator
          */
@@ -102,7 +102,6 @@ namespace ea {
                 ic.numIndividuals,
                 ic.migrationOps[0].name, ic.migrationOps[0].params, //outgoing
                 ic.migrationOps[1].name, ic.migrationOps[1].params); //incoming
-            stats = std::make_shared<IslandStatistics>();
         }
 
         /**
@@ -189,7 +188,7 @@ namespace ea {
                 
             }
             numEvals = mu;
-            stats->takeStats(obj->getEvals(), population);
+            stats.takeStats(obj->getEvals(), population);
         }
 
         /**
@@ -253,7 +252,7 @@ namespace ea {
                 migrate->send(population);
                 
                 // take stats -----------------------------------------------------
-                stats->takeStats(obj->getEvals(), population);
+                stats.takeStats(obj->getEvals(), population);
             }
             return isActive();
         }
@@ -264,7 +263,7 @@ namespace ea {
          * Returns the island statistics
          * @return the island statistics
          */
-        std::shared_ptr<IslandStatistics> getStatistics() {
+        IslandStatistics & getStatistics() {
             return stats;
         }
     };
