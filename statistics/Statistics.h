@@ -39,7 +39,7 @@ namespace ea {
         /**
          * to compute diversity
          */
-        std::shared_ptr<DiversityMeasure> diversity{ nullptr };
+        DiversityMeasure * diversity{ nullptr };
 
         /**
          * Sets the comparator used to compare individuals
@@ -54,8 +54,8 @@ namespace ea {
          * Sets the diversity measure used in the population
          * @param diversity the diversity measure
          */
-        virtual void setDiversityMeasure(std::shared_ptr<DiversityMeasure> diversity) {
-            this->diversity = diversity;
+        virtual void setDiversityMeasure(DiversityMeasure * diversity_m) {
+            diversity = diversity_m;
         }
 
         /**

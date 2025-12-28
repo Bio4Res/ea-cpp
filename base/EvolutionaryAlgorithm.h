@@ -25,7 +25,11 @@ namespace ea {
         /**
          * the objective function
          */
-        std::unique_ptr<ObjectiveFunction> obj{nullptr};
+        std::unique_ptr<ObjectiveFunction> obj = nullptr;
+        /* 
+         * diversity measure (when used for statistics)
+        */
+        std::unique_ptr<DiversityMeasure> diversity_measure  = nullptr;
         /**
          * current seed for the RNG
          */
@@ -83,6 +87,13 @@ namespace ea {
                 i.setObjectiveFunction(obj.get());
             stats.setComparator(obj->getComparator());
         }
+        /**
+         * Sets the diversity measure for all statistics
+         */
+        void setDiversityMeasure(std::unique_ptr<DiversityMeasure> dm) { 
+            diversity_measure = std::move(dm);
+            stats.setDiversityMeasure(diversity_measure.get());  // ✅ Pasar raw pointer
+        }
 
         /**
          * Returns the island whose id is given
@@ -132,6 +143,7 @@ namespace ea {
          * If all islands become inactive, statistics are closed for that run
          * @return true if some island(s) remain(s) active
          */
+        /*
         bool stepUp() {
             for (size_t k = 0; k < active.size(); ) {
                 Island * i = active[k];
@@ -150,6 +162,25 @@ namespace ea {
 
             return true;
         }
+        */
+        bool stepUp() {
+            //con stable_partition dejo todos los true a la izquierda de it, y los false a su derecha
+            auto it = std::stable_partition(active.begin(), active.end(),
+                                            [](Island* i) {
+                                                return i->stepUp(); //avance en cada isla
+                                            });
+
+            inactive.insert(inactive.end(), it, active.end());
+            active.erase(it, active.end());
+
+            if (active.empty()) {
+                stats.closeRun();
+                return false;
+            }
+
+            return true;
+        }
+
         /**
          * Runs the EA
          */

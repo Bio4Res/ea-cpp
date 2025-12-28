@@ -59,10 +59,10 @@ namespace ea {
             }
         }
 
-        void setDiversityMeasure(std::shared_ptr<DiversityMeasure> d) override {
-            Statistics::setDiversityMeasure(d);
+        void setDiversityMeasure(DiversityMeasure * dm) override {
+            Statistics::setDiversityMeasure(dm);
             for (auto & i : islands) {
-                i.getStatistics()->setDiversityMeasure(d);
+                i.getStatistics()->setDiversityMeasure(dm);
             }
         }
 

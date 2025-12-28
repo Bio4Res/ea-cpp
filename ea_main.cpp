@@ -270,11 +270,11 @@ int main(int argc, char* argv[]) {
                 throw std::runtime_error("Function must be continuous for binary encoding");
             auto unique_cf_cast = std::unique_ptr<ea::ContinuousObjectiveFunction>(cf_cast);
             myEA.setObjectiveFunction(std::make_unique<ea::BinaryEncodedContinuousObjectiveFunction>(experiment.numbits, std::move(unique_cf_cast)));
-            myEA.stats.setDiversityMeasure(std::make_unique<ea::EntropyDiversity>());
+            myEA.setDiversityMeasure(std::make_unique<ea::EntropyDiversity>());
         }
         else {
             myEA.setObjectiveFunction(std::move(cf));
-            myEA.stats.setDiversityMeasure(std::make_unique<ea::VarianceDiversity>());
+            myEA.setDiversityMeasure(std::make_unique<ea::VarianceDiversity>());
         }
 
         std::cout << "-------------------------------------------------------------------------------------\n";
