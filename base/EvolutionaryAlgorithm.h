@@ -122,7 +122,7 @@ namespace ea {
                 for (auto & i : islands) {
                     i.resetConnections();
                     auto links = topology->get(i.getID());
-                    for (const int& id : *links)
+                    for (const int& id : links)
                         i.connect(getIslandByID(id));
                 }
             }

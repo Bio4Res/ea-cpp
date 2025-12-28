@@ -15,7 +15,7 @@ namespace ea {
         /**
          * Mapping from island ID to the set of islands ID the former is conected to
          */
-        std::unordered_map<int, std::shared_ptr<std::unordered_set<int>> > connections{};
+        std::unordered_map<int, std::unordered_set<int> > connections{};
         /**
          * Whether the topology has a random component during creation that
          * might produce a different result if created again.
@@ -39,7 +39,7 @@ namespace ea {
             regenerable = false;
 
             for (int i = 0; i < n; i++) {
-                connections[i] = std::make_shared<std::unordered_set<int>>();
+                connections[i] = std::unordered_set<int>();
             }
         }
 
@@ -70,18 +70,7 @@ namespace ea {
          * @param destination island receiving individuals
          */
         void add(int origin, int destination) {
-            /*auto links = connections[origin];
-            if (links == nullptr) {
-                links = new std::unordered_set<int>;
-                connections[origin] = links;
-            }
-            links->insert(destination);
-            */
-            if (connections.contains(origin))
-                connections[origin]->insert(destination);
-            else
-                connections.emplace(origin, std::make_shared< std::unordered_set<int>>());
-
+            connections[origin].insert(destination);
         }
 
         /**
@@ -90,35 +79,18 @@ namespace ea {
          * @param destination island receiving individuals
          */
         void remove(int origin, int destination) {
-            /*auto* links = connections[origin];
-            if (links == nullptr) {
-                links = new std::unordered_set<int>();
-                connections[origin] = links;
-            }
-            links->extract(destination);
-            */
             if (connections.contains(origin))
-                connections[origin]->extract(destination);
-            /*else //JES CHECK: creo que este else no seria necesario
-                connections.emplace(origin, std::make_shared< std::unordered_set<int>>());
-            */
+                connections[origin].erase(destination);
         }
 
         /**
          * Gets the connections from an island
          * @param origin the id of the island
-         * @return a list with the ids of the islands that origin can send to.
+         * @return a set with the ids of the islands that origin can send to.
          */
-        auto get(int origin) {
-            /*std::unordered_set<int>* links = connections[origin];
-            if (links == nullptr) {
-                links = new std::unordered_set<int>();
-                connections[origin] = links;
-            }
-            return links;
-            */
-            if (!connections.contains(origin))
-                connections.emplace(origin, std::make_shared< std::unordered_set<int>>());
+        const std::unordered_set<int>& get(int origin) {
+             if (!connections.contains(origin))
+                connections[origin] = std::unordered_set<int>();
             return connections[origin];
         }
 
@@ -127,7 +99,7 @@ namespace ea {
             str += "topology: ";
             for (auto& [k, v] : connections) {
                 str += "<" + std::to_string(k) + ": ";
-                for (auto& i : *v)
+                for (auto& i : v)
                     str += std::to_string(i) + " ";
                 str += ">";
             }
