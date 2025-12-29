@@ -13,7 +13,7 @@ namespace ea {
         /**
          * list of seeds used in each run
          */
-        std::deque<long> seeds;
+        std::vector<long> seeds;
         /**
          * last seed used
          */
@@ -21,7 +21,7 @@ namespace ea {
         /**
          * to measure computational times
          */
-        std::deque<double> runtime;
+        std::vector<double> runtime;
         /**
          * time at the beginning of a run
          */
@@ -43,34 +43,38 @@ namespace ea {
 
 
         void clear() override {
-            for (auto & i : islands) {
-                i.getStatistics().clear();
+            const size_t n = islands.size();
+            for (size_t i = 0; i < n; ++i) {
+                islands[i].getStatistics().clear();
             }
             seeds.clear();
             runtime.clear();
             runActive = false;
         }
 
-
-        void setComparator(std::function<bool(const Individual&, const Individual&)> comparator) override {
+        void setComparator(const std::function<bool(const Individual&, const Individual&)>& comparator) override {
             Statistics::setComparator(comparator);
-            for (auto & i : islands) {
-                i.getStatistics().setComparator(comparator);
+            const size_t n = islands.size();
+            for (size_t i = 0; i < n; ++i) {
+                islands[i].getStatistics().setComparator(comparator);
             }
         }
 
         void setDiversityMeasure(DiversityMeasure * dm) override {
             Statistics::setDiversityMeasure(dm);
-            for (auto & i : islands) {
-                i.getStatistics().setDiversityMeasure(dm);
+            const size_t n = islands.size();
+            for (size_t i = 0; i < n; ++i) {
+                islands[i].getStatistics().setDiversityMeasure(dm);
             }
         }
 
         void closeRun() override {
             if (runActive) {
                 seeds.push_back(currentSeed);
-                for (auto & i : islands)
-                    i.getStatistics().closeRun();
+                
+                const size_t n = islands.size();
+                for (size_t i = 0; i < n; ++i)
+                    islands[i].getStatistics().closeRun();
 
                 toc = std::chrono::steady_clock::now();
                 std::chrono::duration<double> diff = toc - tic;
@@ -83,29 +87,34 @@ namespace ea {
             if (runActive)
                 closeRun();
             currentSeed = EAUtilRandom::instance().getSeed();
-            for (auto & i : islands)
-                i.getStatistics().newRun();
+            
+            const size_t n = islands.size();
+            for (size_t i = 0; i < n; ++i)
+                islands[i].getStatistics().newRun();
+            
             runActive = true;
             tic = std::chrono::steady_clock::now();
-
         }
 
         json toJSON(int i) const override {
             json mijson; 
             mijson["run"] = i;
-            mijson["seed"] = seeds.at(i);
-            mijson["time"] = runtime.at(i);
+            mijson["seed"] = seeds[i];
+            mijson["time"] = runtime[i];
+            
             json jsondata = json::array();
-            for (auto & island : islands)
-                jsondata.push_back(island.getStatistics().toJSON(i));
-            mijson["rundata"] = jsondata;
+            const size_t n = islands.size();
+            for (size_t j = 0; j < n; ++j)
+                jsondata.push_back(islands[j].getStatistics().toJSON(i));
+            
+            mijson["rundata"] = std::move(jsondata);
             return mijson;
         }
 
         json toJSON() const override {
             json jsondata = json::array(); 
-            size_t n = seeds.size();
-            for (size_t i = 0; i < n; i++)
+            const size_t n = seeds.size();
+            for (size_t i = 0; i < n; ++i)
                 jsondata.push_back(toJSON(i));
             return jsondata;
         }
@@ -115,32 +124,33 @@ namespace ea {
          * @param i the index of the run
          * @return the CPU time of the i-th run
          */
-        double getTime(int i) {
+        double getTime(int i) const {
             return runtime[i];
         }
 
         Individual& getBest(int i) override {
-            size_t n = islands.size();
-            auto& best = islands[0].getStatistics().getBest(i);
-            for (size_t j = 1; j < n; j++) {
-                auto& cand = islands[j].getStatistics().getBest(i);
-                //if (comparator(cand, best) < 0)
-                if (comparator(cand, best))
-                    best = cand;
+            Individual* best = &islands[0].getStatistics().getBest(i);
+            const size_t n = islands.size();
+            
+            for (size_t j = 1; j < n; ++j) {
+                Individual& cand = islands[j].getStatistics().getBest(i);
+                if (comparator(cand, *best))
+                    best = &cand;
             }
-            return best;
+            return *best;
         }
 
         Individual& getBest() override {
-            size_t numruns = seeds.size();
-            auto& best = getBest(0);
-            for (size_t j = 1; j < numruns; j++) {
-                auto& cand = getBest(j);
-                //if (comparator(cand, best) < 0)
-                if (comparator(cand, best))
-                    best = cand;
+            const size_t numruns = seeds.size();
+            if (numruns == 1) return getBest(0);
+            
+            Individual* best = &getBest(0);
+            for (size_t j = 1; j < numruns; ++j) {
+                Individual& cand = getBest(j);
+                if (comparator(cand, *best))
+                    best = &cand;
             }
-            return best;
+            return *best;
         }
 
     };

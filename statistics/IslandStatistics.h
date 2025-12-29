@@ -146,11 +146,11 @@ namespace ea {
                 }
                 jsonsolsgenome.push_back(jsongenome);
             }
-            jsonsols["evals"] = jsonsolsevals;
-            jsonsols["fitness"] = jsonsolsfitness;
-            jsonsols["genome"] = jsonsolsgenome;
+            jsonsols["evals"] = std::move(jsonsolsevals);
+            jsonsols["fitness"] = std::move(jsonsolsfitness);
+            jsonsols["genome"] = std::move(jsonsolsgenome);
                         
-            jsondata["isols"] = jsonsols;
+            jsondata["isols"] = std::move(jsonsols);
                         
             return jsondata;
         }

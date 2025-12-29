@@ -46,7 +46,7 @@ namespace ea {
          * @param comparator the comparator
          */
     public:
-        virtual void setComparator(std::function<bool(const Individual&, const Individual&)> comparator) {
+        virtual void setComparator(const std::function<bool(const Individual&, const Individual&)> & comparator) {
             this->comparator = comparator;
         }
 
