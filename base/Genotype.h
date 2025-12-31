@@ -22,42 +22,45 @@ namespace ea {
     };
 
     struct Genotype { 
-
         using geno_t = Gene;
+    private:    
+        const GeneType type;    
+        const size_t size;
+    public:
         /**
          * The genes in the genome
          */
-        
-        std::unique_ptr<geno_t[]> genes;
+        //std::unique_ptr<geno_t[]> genes;
+        std::vector<geno_t> genes;
         /**
          * Creates a genome of the desired length. Each gene is not initialized in C++
          * @param l the genome length
          */
-        Genotype(std::size_t l, GeneType t) : size{l}, type{t}{
-            genes = std::make_unique<geno_t[]>(l);
+        Genotype(std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
+            //genes = std::make_unique<geno_t[]>(l);
         }
 
-        Genotype(const geno_t* tocopy, std::size_t l, GeneType t) : size{l}, type{t}{
-            genes = std::make_unique<geno_t[]>(size);
-            std::memcpy(genes.get(), tocopy, size*sizeof(geno_t));
+        Genotype(const geno_t* tocopy, std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
+            //genes = std::make_unique<geno_t[]>(size);
+            std::memcpy(genes.data(), tocopy, size*sizeof(geno_t));
         }
 
         // Constructor de copia
-        Genotype(const Genotype& other) : size{other.size}, type{other.type} {
-            genes = std::make_unique<Gene[]>(size);
-            std::memcpy(genes.get(), other.genes.get(), size * sizeof(Gene));
+        Genotype(const Genotype& other) : type{other.type}, size{other.size}, genes(other.size) {
+            //genes = std::make_unique<Gene[]>(size);
+            std::memcpy(genes.data(), other.genes.data(), size * sizeof(Gene));
         }
         
         // Move constructor
         Genotype(Genotype&& other) noexcept 
-            : genes(std::move(other.genes)), size(other.size), type(other.type) {}
+            : type(other.type), size(other.size), genes(std::move(other.genes)){}
         
         // Copy assignment
-        Genotype& operator=(const Genotype& other) {
+        Genotype& operator=(const Genotype& other){
             if (this != &other) {
                 assert(size == other.size && "Cannot assign genotypes of different sizes");
                 assert(type == other.type && "Cannot assign genotypes of different types");
-                std::memcpy(genes.get(), other.genes.get(), size * sizeof(Gene));
+                std::memcpy(genes.data(), other.genes.data(), size * sizeof(Gene));
             }
             return *this;
         }
@@ -65,6 +68,8 @@ namespace ea {
         // Move assignment
         Genotype& operator=(Genotype&& other) noexcept {
             if (this != &other) {
+                assert(size == other.size && "Cannot assign genotypes of different sizes");
+                assert(type == other.type && "Cannot assign genotypes of different types");
                 genes = std::move(other.genes);
             }
             return *this;
@@ -78,7 +83,7 @@ namespace ea {
         GeneType getType() const { return type; }
 
         std::unique_ptr<Genotype> clone() {
-            return std::make_unique<Genotype>(genes.get(), size, type);
+            return std::make_unique<Genotype>(genes.data(), size, type);
         }
 
         std::string toString() const {
@@ -98,9 +103,6 @@ namespace ea {
             }
             return str;
         }
-    private:
-        const size_t size;
-        const GeneType type;
     };
 
 }
