@@ -296,7 +296,7 @@ int main(int argc, char* argv[]) {
     
         std::string statsfilename = std::format("{}-{}-{}-stats.json", experiment.problem, experiment.numvars, seed);
         std::ofstream file(statsfilename);
-        file << myEA.stats.toJSON();
+        std::format_to(std::ostreambuf_iterator<char>(file), "{}", myEA.stats.toJSON());
         file.close();
 
         seed += numruns - 1;

@@ -8,6 +8,7 @@ Dependencies:
 
 nlohmann.json 3.11.3 (a header-only library to manage JSON files)
 
-Build:
+Build (use of tcmalloc is highly recommended):
 
-g++ -O3 -march=native -DNDEBUG -Wall -I. -o ea_main *.cpp -std=c++23 
+g++ -O3 -DNDEBUG -Wall -I. *.cpp -std=c++23 -march=native -ltcmalloc_minimal -o ea_main
+

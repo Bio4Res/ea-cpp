@@ -106,3 +106,15 @@ namespace ea {
     };
 
 }
+
+template <>
+struct std::formatter<json> {
+
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const json& j, std::format_context& ctx) const {
+        return std::format_to(ctx.out(), "{}", to_string(j));
+    }
+};
