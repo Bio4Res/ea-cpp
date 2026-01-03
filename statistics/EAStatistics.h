@@ -3,6 +3,9 @@
 #include <statistics/Statistics.h>
 #include <base/Island.h>
 
+#include <format>
+#include <iterator>
+
 namespace ea {
     struct EAStatistics : public Statistics {
     private:
@@ -153,5 +156,19 @@ namespace ea {
             return *best;
         }
 
+        friend struct std::formatter<ea::EAStatistics>;
+
     };
 }
+
+template <>
+struct std::formatter<ea::EAStatistics> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const ea::EAStatistics& stats, std::format_context& ctx) const {
+        return std::format_to(ctx.out(), "{}", stats.toJSON());
+    }
+};
+

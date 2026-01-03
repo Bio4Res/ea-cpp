@@ -182,6 +182,8 @@ namespace ea {
 
         friend std::ostream& operator<<(std::ostream& os, const IslandStatistics& is);
 
+        friend struct std::formatter<ea::IslandStatistics>;
+
     };
 
     std::ostream& operator<<(std::ostream& os, const IslandStatistics& is){
@@ -197,3 +199,16 @@ namespace ea {
     }
 
 }
+
+template <>
+struct std::formatter<ea::IslandStatistics> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const ea::IslandStatistics& is, std::format_context& ctx) const {
+        //const json j = is.toJSON();
+        return std::format_to(ctx.out(), "{}", is.toJSON());
+    }
+};
+
