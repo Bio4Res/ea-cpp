@@ -115,27 +115,7 @@ namespace ea {
             evaluated = true;
         }
 
-        /**
-         * Returns a copy of the individual
-         * @return a copy of the individual
-         */
-
-         /*
-         std::unique_ptr<Individual> clone() const {
-             auto result = std::make_unique<Individual>(*this);
-             //result->setFitness(this->fitness);
-             //result->setGenome(std::move(this->genome->clone()));
-             return result;
-         }
-         */
-        
         friend std::ostream& operator<<(std::ostream& os, const Individual & indiv);
-
-        /*
-        std::string toString() {
-            return "{\n\tfitness: " + (evaluated ? std::to_string(fitness) : "*") + "\n\tgenome: " + genome->toString() + "\n}";
-        }
-        */
 
     };
 

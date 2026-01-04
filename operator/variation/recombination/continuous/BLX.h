@@ -53,6 +53,7 @@ namespace ea {
             ind.setGenome(std::move(offspring));
             return ind;
         }
+    
 
     };
 

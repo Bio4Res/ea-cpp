@@ -149,15 +149,7 @@ namespace ea {
 
             return population;
         }
-/*
-        std::string toString() override {
-            std::string str = "Migration(";
-            str += emigrate->toString();
-            str += "[" + std::to_string(frequency) + ", " + std::to_string(numIndividuals) + "], ";
-            str += immigrate->toString() + ")";
-            return str;
-        }
-*/
+
         friend std::ostream& operator<<(std::ostream& os, const MigrationOperator& op);
 
     };

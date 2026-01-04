@@ -58,7 +58,10 @@ namespace ea {
          * Creates an EA given a certain configuration
          * @param conf configuration of the EA
          */
-        EvolutionaryAlgorithm(config::EAConfiguration& conf) : stats(islands), configuration(conf) {
+
+        EvolutionaryAlgorithm(config::EAConfiguration& conf) :  stats(islands), 
+                                                                configuration(conf)
+        {
             int n = conf.getNumIslands();
             islands.reserve(n);
             active.reserve(n);
@@ -74,8 +77,7 @@ namespace ea {
             stats.clear();
         }
 
-        ~EvolutionaryAlgorithm() {
-        }
+        ~EvolutionaryAlgorithm() = default;
 
         /**
          * Sets the objective function used by the EA

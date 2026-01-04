@@ -5,14 +5,6 @@
 namespace ea {
 
     struct CommaReplacement : public ReplacementOperator {
-        //	/**
-        //	 * Creates the operator given the optimization sense
-        //	 * @param sense the optimization sense
-        //	 */
-        //	public CommaReplacement(OptimizationSense sense) {
-        //		super(sense);
-        //	}
-
             /**
              * Performs comma replacement. Let mu = |population|. If lambda =
              * |offspring| is larger than mu, it keeps the best mu individuals

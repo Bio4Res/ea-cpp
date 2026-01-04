@@ -1,4 +1,5 @@
 #include <iostream>
+#include <print>
 #include <sstream>
 #include <fstream>
 #include <nlohmann/json.hpp>  //external dependency included here 
@@ -127,64 +128,7 @@ std::unique_ptr<ea::DiversityMeasure> createMeasure(std::string& problem) {
     }
 }
 */
-/*
 
-//MAIN BÁSICO:
-
-int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "ERROR: Configuration filename must be provided\n";
-        return 1;
-    }
-
-    try {
-        //lee el json
-        json j;
-        std::ifstream ifs(argv[1]);
-        if (ifs.fail()) {
-            std::cerr << "ERROR when opening " << argv[1] << "\n";
-            return 1;
-        }
-        else
-            j = json::parse(ifs);
-
-
-        config::EAConfiguration conf = j.get<config::EAConfiguration>();
-
-        std::cout << conf.toString();
-
-        int numruns = conf.numruns;
-        std::vector<std::string>  problem = conf.getExtendedConfigurationValue("problem");
-        std::vector<std::string>  rest = conf.getExtendedConfigurationValue("sleep");
-        long sleepTime = 0;
-        if (rest.size() > 0)
-            sleepTime = std::strtol(rest[0].c_str(), nullptr, 0);
-
-        ea::EvolutionaryAlgorithm myEA{ conf };
-        myEA.setObjectiveFunction(create(problem));
-        myEA.stats.setDiversityMeasure(createMeasure(problem[0]));
-        for (int i = 0; i < numruns; i++) {
-            myEA.run();
-            std::cout << "\nRun " << i << ": " <<
-                myEA.stats.getTime(i) << "s\t" << myEA.stats.getBest(i).getFitness();
-
-            if (sleepTime > 0) {
-                std::cout << "Sleeping...\n";
-                std::this_thread::sleep_for(std::chrono::seconds{ sleepTime });
-
-            }
-        }
-
-        std::ofstream file("stats.json");
-        file << myEA.stats.toJSON();
-        file.close();
-
-    }
-    catch (std::exception& e) { std::cout << e.what(); }
-
-}
-
-*/
 
 //MAIN AVANZADO
 
@@ -211,7 +155,7 @@ int main(int argc, char* argv[]) {
     std::string expName = (argc < 2) ? "experiment.json" : argv[1];
 
 #ifdef EA_PARALLEL
-    // Detectar número de núcleos disponibles
+    // Detecta el número de núcleos disponibles
     int max_threads = std::thread::hardware_concurrency();
     tbb::global_control global_limit(
         tbb::global_control::max_allowed_parallelism, 
@@ -231,8 +175,7 @@ int main(int argc, char* argv[]) {
         expReader.close();
     
         Experiment experiment = je.get<Experiment>();
-        std::cout << /* experiment.toString(); */ je.dump();
-
+        std::println("{}",je);
     
         std::string configf = (experiment.numbits > 0) ? "bitstring.json" : "numeric.json";
         std::ifstream reader(configf);
@@ -258,7 +201,7 @@ int main(int argc, char* argv[]) {
         lastseedf.close();
 
         int numruns = conf.numruns;
-        std::cout << conf.toString();
+        std::println("{}", conf.toString());
 
         ea::EvolutionaryAlgorithm myEA(conf);
         auto cf  = create(experiment.problem, experiment.numvars, experiment.range);
@@ -311,21 +254,5 @@ int main(int argc, char* argv[]) {
 
     }
     catch (std::exception& e) { std::cout << e.what(); }
-
-
-
-    
+   
 }
-
-
-
-
-// Ejecutar programa: Ctrl + F5 o menú Depurar > Iniciar sin depurar
-// Depurar programa: F5 o menú Depurar > Iniciar depuración
-
-// Sugerencias para primeros pasos: 1. Use la ventana del Explorador de soluciones para agregar y administrar archivos
-//   2. Use la ventana de Team Explorer para conectar con el control de código fuente
-//   3. Use la ventana de salida para ver la salida de compilación y otros mensajes
-//   4. Use la ventana Lista de errores para ver los errores
-//   5. Vaya a Proyecto > Agregar nuevo elemento para crear nuevos archivos de código, o a Proyecto > Agregar elemento existente para agregar archivos de código existentes al proyecto
-//   6. En el futuro, para volver a abrir este proyecto, vaya a Archivo > Abrir > Proyecto y seleccione el archivo .sln

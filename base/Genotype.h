@@ -30,18 +30,15 @@ namespace ea {
         /**
          * The genes in the genome
          */
-        //std::unique_ptr<geno_t[]> genes;
         std::vector<geno_t> genes;
         /**
          * Creates a genome of the desired length. Each gene is not initialized in C++
          * @param l the genome length
          */
         Genotype(std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
-            //genes = std::make_unique<geno_t[]>(l);
         }
 
         Genotype(const geno_t* tocopy, std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
-            //genes = std::make_unique<geno_t[]>(size);
             std::memcpy(genes.data(), tocopy, size*sizeof(geno_t));
         }
 
