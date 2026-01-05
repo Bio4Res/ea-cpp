@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <any>
 #include <memory>
 #include <string>
 #include <cassert>
@@ -35,17 +34,16 @@ namespace ea {
          * Creates a genome of the desired length. Each gene is not initialized in C++
          * @param l the genome length
          */
-        Genotype(std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
+        Genotype(std::size_t l, GeneType t) : type{t}, size{l} , genes(l){
         }
 
-        Genotype(const geno_t* tocopy, std::size_t l, GeneType t) : type{t}, size{l}, genes(l){
+        Genotype(const geno_t* tocopy, std::size_t l, GeneType t) : type{t}, size{l} , genes(l){
             std::memcpy(genes.data(), tocopy, size*sizeof(geno_t));
         }
 
         // Constructor de copia
-        Genotype(const Genotype& other) : type{other.type}, size{other.size}, genes(other.size) {
-            //genes = std::make_unique<Gene[]>(size);
-            std::memcpy(genes.data(), other.genes.data(), size * sizeof(Gene));
+        Genotype(const Genotype& other) : type{other.type}, size{other.size}, genes(other.size){
+            std::memcpy(genes.data(), other.genes.data(), size * sizeof(geno_t));
         }
         
         // Move constructor
@@ -57,7 +55,7 @@ namespace ea {
             if (this != &other) {
                 assert(size == other.size && "Cannot assign genotypes of different sizes");
                 assert(type == other.type && "Cannot assign genotypes of different types");
-                std::memcpy(genes.data(), other.genes.data(), size * sizeof(Gene));
+                std::memcpy(genes.data(), other.genes.data(), size * sizeof(geno_t));
             }
             return *this;
         }
