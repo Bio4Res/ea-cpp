@@ -16,11 +16,11 @@ namespace ea {
         SinglePointCrossover(const std::vector<std::string>& pars) : RecombinationOperator(pars) {
 
         }
-
+/*
         std::string toString() {
             return { "SPX(" + std::to_string(prob) + ")" };
         }
-
+*/
         constexpr int getArity() override {
             return 2;
         }

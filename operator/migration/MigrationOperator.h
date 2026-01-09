@@ -150,18 +150,6 @@ namespace ea {
             return population;
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const MigrationOperator& op);
-
     };
-
-    std::ostream& operator<<(std::ostream& os, const MigrationOperator& op){
-        os << "Migration(";
-        os <<  op.emigrate;
-        os << "[" << op.frequency << ", " << op.numIndividuals << "], ";
-        os << op.immigrate << ")";
-        return os;
-    }
-            
-
 
 }

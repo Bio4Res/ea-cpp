@@ -67,7 +67,7 @@ namespace config{
          * List of additional non-standard configuration settings used in specific island models
          */
         std::vector<OperatorConfiguration> extendedConfiguration{};
-
+/*
         std::string toString() const {
             std::string str = "islands: " + std::to_string(numIslands) + "\n" +
                 "popsize: " + std::to_string(popSize) + "\n" +
@@ -133,6 +133,7 @@ namespace config{
             }
             return str;
         }
+*/
     };
 
 
@@ -194,3 +195,104 @@ namespace config{
     }
 
 }
+
+template <>
+struct std::formatter<config::IslandConfiguration> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const config::IslandConfiguration& c, std::format_context& ctx) const {
+        auto out = ctx.out();
+
+        out = std::format_to(
+            out,
+            "islands: {}\n"
+            "popsize: {}\n"
+            "offspring: {}\n"
+            "maxevals: {}\n"
+            "initialization: {}",
+            c.numIslands,
+            c.popSize,
+            c.numOffspring,
+            c.maxEvals,
+            c.variationOps[0].name
+        );
+
+        if (!c.variationOps[0].params.empty()) {
+            out = std::format_to(out, " (");
+            for (const auto& p : c.variationOps[0].params) {
+                out = std::format_to(out, "{} ", p);
+            }
+            out = std::format_to(out, ")");
+        }
+
+        out = std::format_to(out, "\nselection: {}", c.selection.name);
+        if (!c.selection.params.empty()) {
+            out = std::format_to(out, " (");
+            for (const auto& p : c.selection.params) {
+                out = std::format_to(out, "{} ", p);
+            }
+            out = std::format_to(out, ")");
+        }
+
+        out = std::format_to(out, "\n");
+
+        for (size_t i = 1; i < c.variationOps.size(); ++i) {
+            out = std::format_to(out, "variation: {} (", c.variationOps[i].name);
+            for (const auto& p : c.variationOps[i].params) {
+                out = std::format_to(out, "{} ", p);
+            }
+            out = std::format_to(out, ")\n");
+        }
+
+        out = std::format_to(out, "replacement: {}", c.replacement.name);
+        if (!c.replacement.params.empty()) {
+            out = std::format_to(out, " (");
+            for (const auto& p : c.replacement.params) {
+                out = std::format_to(out, "{} ", p);
+            }
+            out = std::format_to(out, ")");
+        }
+
+        out = std::format_to(out, "\n");
+
+        if (!c.migrationOps[0].name.empty() || !c.migrationOps[1].name.empty()) {
+            out = std::format_to(out, "migration : ");
+
+            if (!c.migrationOps[0].name.empty()) {
+                out = std::format_to(out, "{}", c.migrationOps[0].name);
+                if (!c.migrationOps[0].params.empty()) {
+                    out = std::format_to(out, " (");
+                    for (const auto& p : c.migrationOps[0].params) {
+                        out = std::format_to(out, "{} ", p);
+                    }
+                    out = std::format_to(out, ")");
+                }
+                out = std::format_to(
+                    out,
+                    " [freq={}, num={}] + ",
+                    c.frequency,
+                    c.numIndividuals
+                );
+            } else {
+                out = std::format_to(out, "null + ");
+            }
+
+            if (!c.migrationOps[1].name.empty()) {
+                out = std::format_to(out, "{}", c.migrationOps[1].name);
+                if (!c.migrationOps[1].params.empty()) {
+                    out = std::format_to(out, " (");
+                    for (const auto& p : c.migrationOps[1].params) {
+                        out = std::format_to(out, "{} ", p);
+                    }
+                    out = std::format_to(out, ")");
+                }
+            } else {
+                out = std::format_to(out, "null");
+            }
+        }
+
+        return out;
+    }
+};

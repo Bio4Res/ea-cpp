@@ -13,8 +13,6 @@ namespace ea {
         BitFlip(const std::vector<std::string>& pars) : MutationOperator(pars) {
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const BitFlip & indiv);
-
     protected:
         Individual apply_(const individuals_v & parents) override {
             auto ind = Individual(parents[0]);
@@ -27,10 +25,5 @@ namespace ea {
 
 
     };
-
-    std::ostream& operator<<(std::ostream& os, const BitFlip & op) {
-        os << "BitFlip(" << op.prob << ")";
-        return os;
-    }
 
 }

@@ -70,11 +70,11 @@ namespace ea {
             }
             return result;
         }
-
+/*
         std::string toString() {
             return { "Tournament(" + std::to_string(tournamentSize) + ")" };
         }
-
+*/
     };
 
 

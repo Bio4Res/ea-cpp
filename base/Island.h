@@ -257,8 +257,6 @@ namespace ea {
             return isActive();
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const Island& dt);
-
         /**
          * Returns the island statistics
          * @return the island statistics
@@ -267,15 +265,6 @@ namespace ea {
             return stats;
         }
     };
-
-    std::ostream& operator<<(std::ostream& os, const Island& island){
-        os << "{\n\tnumevals: " << island.numEvals << ",\n\tpopulation: [\n" <<
-        "\t\t" << island.population.at(0); // .replace("\n", "\n\t\t");
-        for (int i = 1; i < island.mu; i++)
-            os << ",\n\t\t" << island.population.at(i); // .replace("\n", "\n\t\t");
-        os << "\n\t]\n}";
-        return os;
-    }
 
 }
 

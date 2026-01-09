@@ -54,31 +54,7 @@ namespace config {
             return std::vector<std::string>{};
         }
 
-        std::string toString() const {
-            std::string result;
-            result = "numruns: " + std::to_string(numruns) +
-                "\nseed: " + std::to_string(seed) +
-                "\n#islands: " + std::to_string(getNumIslands()) +
-                "\ntopology: " + topology.name + " ";
-            std::for_each(topology.params.cbegin(), topology.params.cend(),
-                [&result](const auto& elem) { result += elem + " "; });
-
-            if (extendedConfiguration.size() > 0) {
-                result += "\nextended:\n";
-                for (const OperatorConfiguration& opc : extendedConfiguration) {
-                    result += "\tname: " + opc.name + " ( ";
-                    std::for_each(opc.params.begin(), opc.params.end(),
-                        [&result](const auto& elem) { result += elem + " "; });
-                    result += ")\n";
-                }
-            }
-
-            int k = 1;
-            for (const IslandConfiguration& ic : iConf)
-                result += "Island configuration #" + std::to_string(k++) + "\n\t" + ic.toString() + "\n";
-
-            return result;
-        }
+        friend struct std::formatter<config::EAConfiguration>;
     };
 
 
@@ -104,3 +80,50 @@ namespace config {
 
     }
 }
+
+template <>
+struct std::formatter<config::EAConfiguration> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const config::EAConfiguration& c, std::format_context& ctx) const {
+        auto out = ctx.out();
+
+        out = std::format_to(
+            out,
+            "numruns: {}\nseed: {}\n#islands: {}\ntopology: {} ",
+            c.numruns,
+            c.seed,
+            c.getNumIslands(),
+            c.topology.name
+        );
+
+        for (const auto& p : c.topology.params) {
+            out = std::format_to(out, "{} ", p);
+        }
+
+        if (!c.extendedConfiguration.empty()) {
+            out = std::format_to(out, "\nextended:\n");
+            for (const auto& opc : c.extendedConfiguration) {
+                out = std::format_to(out, "\tname: {} ( ", opc.name);
+                for (const auto& p : opc.params) {
+                    out = std::format_to(out, "{} ", p);
+                }
+                out = std::format_to(out, ")\n");
+            }
+        }
+
+        int k = 1;
+        for (const auto& ic : c.iConf) {
+            out = std::format_to(
+                out,
+                "Island configuration #{}\n\t{}\n",
+                k++,
+                ic
+            );
+        }
+
+        return out;
+    }
+};

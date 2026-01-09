@@ -30,8 +30,6 @@ namespace ea {
             }
         }
         
-        friend std::ostream& operator<<(std::ostream& os, const GaussianMutation & indiv);
-
     protected:
         Individual apply_(const individuals_v& parents) override {
             auto ind = Individual(parents[0]);
@@ -47,10 +45,5 @@ namespace ea {
         }
 
     };
-
-    std::ostream& operator<<(std::ostream& os, const GaussianMutation & op) {
-        os << "GaussianMutation(p=" << op.prob << ")";
-        return os;
-    }
 
 }

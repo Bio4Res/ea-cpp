@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
         lastseedf.close();
 
         int numruns = conf.numruns;
-        std::println("{}", conf.toString());
+        std::print("{}", conf);
 
         ea::EvolutionaryAlgorithm myEA(conf);
         auto cf  = create(experiment.problem, experiment.numvars, experiment.range);

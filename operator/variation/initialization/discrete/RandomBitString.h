@@ -12,7 +12,6 @@ namespace ea {
         RandomBitString(const std::vector<std::string>& pars) : InitializationOperator(pars) {
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const RandomBitString& op);
     protected:
         Individual apply_(const individuals_v & parents) override {
             int l = obj->numvars;
@@ -27,8 +26,4 @@ namespace ea {
 
     };
 
-    std::ostream& operator<<(std::ostream& os, const RandomBitString & op) {
-        os << "RandomBitString";
-        return os;
-    }
 }

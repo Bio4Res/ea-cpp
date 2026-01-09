@@ -94,19 +94,30 @@ namespace ea {
             return connections[origin];
         }
 
-        std::string toString() {
-            std::string str;
-            str += "topology: ";
-            for (auto& [k, v] : connections) {
-                str += "<" + std::to_string(k) + ": ";
-                for (auto& i : v)
-                    str += std::to_string(i) + " ";
-                str += ">";
-            }
-            return str;
-        }
-
-
+        friend struct std::formatter<ea::Topology>;
     };
 
 }
+
+template <>
+struct std::formatter<ea::Topology> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const ea::Topology& t, std::format_context& ctx) const {
+        auto out = ctx.out();
+
+        out = std::format_to(out, "topology: ");
+
+        for (const auto& [k, v] : t.connections) {
+            out = std::format_to(out, "<{}: ", k);
+            for (const auto& i : v) {
+                out = std::format_to(out, "{} ", i);
+            }
+            out = std::format_to(out, ">");
+        }
+
+        return out;
+    }
+};

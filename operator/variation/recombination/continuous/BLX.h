@@ -31,7 +31,6 @@ namespace ea {
             }
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const BLX& op);
     protected:
         Individual apply_(const individuals_v& parents) override {
             const auto father = parents[0].getGenome();
@@ -57,8 +56,4 @@ namespace ea {
 
     };
 
-    std::ostream& operator<<(std::ostream& os, const BLX& op) {
-        os << "BLX(p=" << op.prob << ", alpha=" << op.alpha << ")";
-        return os;
-    }
 }

@@ -81,23 +81,30 @@ namespace ea {
             return std::make_unique<Genotype>(genes.data(), size, type);
         }
 
-        std::string toString() const {
-            std::string str;
-            str.reserve(size * 12);
-            
-            if (type == GeneType::INT) {
-                for (size_t i = 0; i < size; ++i) {
-                    str += " ";
-                    str += std::to_string(genes[i].i);
-                }
-            } else {
-                for (size_t i = 0; i < size; ++i) {
-                    str += " ";
-                    str += std::to_string(genes[i].d);
-                }
-            }
-            return str;
-        }
+        friend struct std::formatter<ea::Genotype>;
     };
 
 }
+
+template <>
+struct std::formatter<ea::Genotype> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const ea::Genotype& g, std::format_context& ctx) const {
+        auto out = ctx.out();
+
+        const size_t n = g.length();
+        if (g.getType() == ea::GeneType::INT) {
+            for (size_t i = 0; i < n; ++i) {
+                out = std::format_to(out, " {}", g.genes[i].i);
+            }
+        } else {
+            for (size_t i = 0; i < n; ++i) {
+                out = std::format_to(out, " {}", g.genes[i].d);
+            }
+        }
+        return out;
+    }
+};

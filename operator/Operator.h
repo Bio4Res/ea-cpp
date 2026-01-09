@@ -56,7 +56,7 @@ namespace ea {
         /**
          * Performs whatever actions are required at the beginning of a run
          */
-        void newRun() {
+        virtual void newRun() {
         }
     };
 

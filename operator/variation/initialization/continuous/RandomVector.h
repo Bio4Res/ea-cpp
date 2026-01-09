@@ -19,7 +19,6 @@ namespace ea {
             }
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const RandomVector& op);
     protected:
         Individual apply_(const individuals_v& parents) override {
             int l = obj->numvars;
@@ -36,8 +35,4 @@ namespace ea {
 
     };
 
-    std::ostream& operator<<(std::ostream& os, const RandomVector& op) {
-        os << "RandomVector";
-        return os;
-    }
 }

@@ -115,19 +115,7 @@ namespace ea {
             evaluated = true;
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const Individual & indiv);
-
     };
-
-    std::ostream& operator<<(std::ostream& os, const Individual& indiv){
-        os << "{\n\tfitness: ";
-        if (indiv.evaluated)
-            os << indiv.fitness;
-        else
-            os << "*";
-        os << "\n\tgenome: " << indiv.genome->toString() << "\n}";
-        return os;
-    }
 
     using individuals_v = std::vector<Individual>;
     using individuals_dq = std::deque<Individual>;
@@ -144,8 +132,30 @@ namespace ea {
         return (a.getFitness() < b.getFitness());
     };
 
-
-
-
-
 }
+
+template <>
+struct std::formatter<ea::Individual> {
+    constexpr auto parse(std::format_parse_context& ctx) {
+        return ctx.begin();
+    }
+
+    auto format(const ea::Individual& indiv, std::format_context& ctx) const {
+        auto out = ctx.out();
+
+        out = std::format_to(out, "{{\n\tfitness: ");
+        if (indiv.isEvaluated()) {
+            out = std::format_to(out, "{}", indiv.getFitness());
+        } else {
+            out = std::format_to(out, "*");
+        }
+
+        out = std::format_to(
+            out,
+            "\n\tgenome: {}\n}}",
+            *indiv.getGenome()
+        );
+
+        return out;
+    }
+};

@@ -98,16 +98,6 @@ namespace ea {
             return migrants;
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const IslandBuffer& ib);
-
     };
-
-    std::ostream& operator<<(std::ostream& os, const IslandBuffer& ib){
-            os << "Buffer : ";
-            for (const auto & elem : ib.buffer) {
-                os << elem << " ";
-            }
-        return os;
-    }
 
 }

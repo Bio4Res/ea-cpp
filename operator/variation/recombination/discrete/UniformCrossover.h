@@ -13,11 +13,11 @@ namespace ea {
         UniformCrossover(const std::vector<std::string>& pars) : RecombinationOperator(pars) {
 
         }
-
+/*
         std::string toString() {
             return { "UX(" + std::to_string(prob) + ")" };
         }
-
+*/
         constexpr int getArity() override {
             return 2;
         }

@@ -180,23 +180,9 @@ namespace ea {
             return best;
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const IslandStatistics& is);
-
         friend struct std::formatter<ea::IslandStatistics>;
 
     };
-
-    std::ostream& operator<<(std::ostream& os, const IslandStatistics& is){
-        size_t runs = is.stats.size();
-        for (size_t i = 0; i < runs; i++) {
-            const auto runstats = is.stats.at(i);
-            os << "Run " << i << "\n=======\n" << "#evals\tbest\tmean\n------\t----\t----\n";
-            std::for_each(runstats.begin(), runstats.end(), [&os](auto & s) {
-                os << s.evals << "\t" << s.best << "\t" << s.mean << "\n";
-                });
-        }
-        return os;
-    }
 
 }
 
