@@ -23,8 +23,8 @@ namespace ea {
     struct Genotype { 
         using geno_t = Gene;
     private:    
-        const GeneType type;    
-        const size_t size;
+        const GeneType type;        
+        const size_t size;        
     public:
         /**
          * The genes in the genome

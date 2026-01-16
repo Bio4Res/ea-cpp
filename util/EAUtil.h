@@ -6,31 +6,30 @@ namespace ea {
 
     class EAUtilRandom final{
     private:
-        EAUtilRandom() = default;
-        int seed = 1;
+        EAUtilRandom()
+        : seed(1),
+          generator(seed),
+          distribution_r(0.0, 1.0),
+          distribution_n(0.0, 1.0)
+    {}
+        uint32_t seed;
         std::mt19937 generator;
         std::uniform_int_distribution<int> distribution_i;
         std::uniform_real_distribution<double> distribution_r;
         std::normal_distribution<double> distribution_n;
     public:
-        void setSeed(long n) {
+        void setSeed(uint32_t n) {
             seed = n;
             generator.seed(n); 
         }
-        int getSeed() const {
+        uint32_t getSeed() const {
             return seed;
         }
         int random(const int bound) {
+            assert(bound > 0);
             using param_type = std::uniform_int_distribution<int>::param_type;
             return distribution_i(generator, param_type{ 0, bound - 1 });
         }
-
-        int random(const size_t bound) {
-            using param_type = std::uniform_int_distribution<int>::param_type;
-            return distribution_i(generator, param_type{ 0, static_cast<int>(bound) - 1 });
-        }
-
-
 
         /**
         * Returns a double number between 0.0 (inc) and 1.0 (exc)

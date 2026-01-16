@@ -13,7 +13,7 @@ namespace config {
         int numIslands = 0;
         std::vector<IslandConfiguration> iConf{};
     public:
-        long seed = SEED;
+        uint32_t seed = SEED;
         int numruns = NUMRUNS;
         std::vector<OperatorConfiguration> extendedConfiguration{};
         OperatorConfiguration topology;
