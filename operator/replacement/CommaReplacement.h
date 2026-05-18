@@ -1,10 +1,12 @@
 #pragma once
 
 #include <operator/replacement/ReplacementOperator.h>
+#include <util/OperatorRegistry.h>
 
 namespace ea {
 
-    struct CommaReplacement : public ReplacementOperator {
+    struct CommaReplacement
+        : public RegisteredExtension<ReplacementOperator, CommaReplacement, "COMMA"> {
             /**
              * Performs comma replacement. Let mu = |population|. If lambda =
              * |offspring| is larger than mu, it keeps the best mu individuals

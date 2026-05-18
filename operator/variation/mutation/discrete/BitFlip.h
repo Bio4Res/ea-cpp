@@ -1,16 +1,18 @@
 #pragma once
 
 #include <operator/variation/mutation/MutationOperator.h>
+#include <util/OperatorRegistry.h>
 
 namespace ea {
 
-    struct BitFlip : public MutationOperator {
+    struct BitFlip
+        : public RegisteredExtension<VariationOperator, BitFlip, "BITFLIP", MutationOperator> {
 
         /**
          * Creates the operator.
          * @param pars String representation of the mutation probability
          */
-        BitFlip(const std::vector<std::string>& pars) : MutationOperator(pars) {
+        BitFlip(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
         }
 
     protected:

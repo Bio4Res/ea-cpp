@@ -3,11 +3,17 @@
 #include <memory>
 #include <fitness/ObjectiveFunction.h>
 #include <operator/replacement/ReplacementOperator.h>
-#include <operator/replacement/ReplacementFactory.h>
+#include <operator/replacement/CommaReplacement.h>
 #include <operator/selection/SelectionOperator.h>
-#include <operator/selection/SelectionFactory.h>
+#include <operator/selection/TournamentSelection.h>
 #include <operator/variation/VariationOperator.h>
-#include <operator/variation/VariationFactory.h>
+#include <operator/variation/mutation/discrete/BitFlip.h>
+#include <operator/variation/mutation/continuous/GaussianMutation.h>
+#include <operator/variation/recombination/continuous/BLX.h>
+#include <operator/variation/recombination/discrete/SinglePointCrossover.h>
+#include <operator/variation/recombination/discrete/UniformCrossover.h>
+#include <operator/variation/initialization/discrete/RandomBitString.h>
+#include <operator/variation/initialization/continuous/RandomVector.h>
 #include <statistics/IslandStatistics.h>
 #include <operator/migration/MigrationOperator.h>
 #include <operator/migration/MigrationFactory.h>
@@ -91,15 +97,15 @@ namespace ea {
             population.reserve(mu);
 
             // create operators
-            selection = SelectionFactory::create(ic.selection.name, ic.selection.params);
-            replace = ReplacementFactory::create(ic.replacement.name, ic.replacement.params);
+            selection = AutoRegistry<SelectionOperator>::create(ic.selection.name, ic.selection.params);
+            replace = AutoRegistry<ReplacementOperator>::create(ic.replacement.name, ic.replacement.params);
             size_t numOps = ic.variationOps.size();
             variationOps.reserve(numOps);
 
-            initialization = VariationFactory::create(ic.variationOps[0].name, ic.variationOps[0].params);
+            initialization = AutoRegistry<VariationOperator>::create(ic.variationOps[0].name, ic.variationOps[0].params);
             poolSize = lambda;
             for (size_t i = 1; i < numOps; i++) {
-                auto op = VariationFactory::create(ic.variationOps[i].name, ic.variationOps[i].params);
+                auto op = AutoRegistry<VariationOperator>::create(ic.variationOps[i].name, ic.variationOps[i].params);
                 poolSize *= op->getArity();
                 variationOps.push_back(std::move(op));
             }

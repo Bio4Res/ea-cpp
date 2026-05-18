@@ -2,11 +2,13 @@
 
 #include <algorithm>
 #include <operator/variation/recombination/RecombinationOperator.h>
+#include <util/OperatorRegistry.h>
 #include <fitness/ContinuousObjectiveFunction.h>
 
 namespace ea {
 
-    struct BLX : public RecombinationOperator {
+    struct BLX
+        : public RegisteredExtension<VariationOperator, BLX, "BLX", RecombinationOperator> {
     private:
         double alpha;
         ContinuousObjectiveFunction * continuous_obj;
@@ -15,7 +17,7 @@ namespace ea {
          * Generates the operator
          * @param pars parameters
          */
-        BLX(const std::vector<std::string>& pars) : RecombinationOperator(pars) {
+        BLX(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
             alpha = std::stod(pars[1]);
         }
 

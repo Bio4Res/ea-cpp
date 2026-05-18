@@ -2,15 +2,17 @@
 
 #include <memory>
 #include <operator/variation/recombination/RecombinationOperator.h>
+#include <util/OperatorRegistry.h>
 
 namespace ea {
-    struct UniformCrossover : public RecombinationOperator {
+    struct UniformCrossover
+        : public RegisteredExtension<VariationOperator, UniformCrossover, "UX", RecombinationOperator> {
 
         /**
          * Generates the operator
          * @param pars probability of application
          */
-        UniformCrossover(const std::vector<std::string>& pars) : RecombinationOperator(pars) {
+        UniformCrossover(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
 
         }
 /*

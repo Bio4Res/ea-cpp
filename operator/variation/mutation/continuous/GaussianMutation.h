@@ -3,10 +3,12 @@
 #include <algorithm>
 #include <fitness/ContinuousObjectiveFunction.h>
 #include <operator/variation/mutation/MutationOperator.h>
+#include <util/OperatorRegistry.h>
 
 namespace ea {
 
-    struct GaussianMutation : public MutationOperator {
+    struct GaussianMutation
+        : public RegisteredExtension<VariationOperator, GaussianMutation, "GAUSSIAN", MutationOperator> {
     private:
         double stepsize;
         ContinuousObjectiveFunction * continuous_obj;
@@ -15,7 +17,7 @@ namespace ea {
          * Creates the operator.
          * @param pars String representation of the mutation probability
          */
-        GaussianMutation(const std::vector<std::string>& pars) : MutationOperator(pars) {
+        GaussianMutation(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
             if (pars.size() > 1)
                 stepsize = std::stod(pars[1]);
             else

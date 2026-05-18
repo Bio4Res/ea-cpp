@@ -3,18 +3,14 @@
 #include <operator/Operator.h>
 
 namespace ea {
+
     struct SelectionOperator : public Operator {
+        virtual individuals_v apply(individuals_v& population, const int& num) = 0;
+    };
 
-        /**
-         * Applies the selection operator on a parental population.
-         * Returns the number of individuals requested.
-         * @param population parental population
-         * @param num the number of individuals to be selected
-         * @return the populations of selected individuals
-         */
-        virtual individuals_v apply(individuals_v & population, const int& num) = 0;
-
-
+    template<typename T>
+    concept SelectionOp = requires(T& op, individuals_v& pop, int n) {
+        { op.apply(pop, n) } -> std::same_as<individuals_v>;
     };
 
 }

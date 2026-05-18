@@ -1,15 +1,17 @@
 #pragma once
 
 #include <operator/variation/initialization/InitializationOperator.h>
+#include <util/OperatorRegistry.h>
 #include <fitness/ContinuousObjectiveFunction.h>
 
 namespace ea {
 
-    struct RandomVector : public InitializationOperator {
+    struct RandomVector
+        : public RegisteredExtension<VariationOperator, RandomVector, "RANDOMVECTOR", InitializationOperator> {
     private:
         ContinuousObjectiveFunction * continuous_obj;
     public:
-        RandomVector(const std::vector<std::string>& pars) : InitializationOperator(pars) {}
+        RandomVector(const std::vector<std::string>& pars) : RegisteredExtension(pars) {}
         
         void setObjectiveFunction(ObjectiveFunction* obj) override {
             InitializationOperator::setObjectiveFunction(obj);

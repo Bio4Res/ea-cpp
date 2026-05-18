@@ -1,15 +1,17 @@
 #pragma once
 
 #include <operator/variation/initialization/InitializationOperator.h>
+#include <util/OperatorRegistry.h>
 
 namespace ea {
 
-    struct RandomBitString : public InitializationOperator {
+    struct RandomBitString
+        : public RegisteredExtension<VariationOperator, RandomBitString, "BITSTRING", InitializationOperator> {
         /**
          * Generates the operator
          * @param pars parameters (none)
          */
-        RandomBitString(const std::vector<std::string>& pars) : InitializationOperator(pars) {
+        RandomBitString(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
         }
 
     protected:

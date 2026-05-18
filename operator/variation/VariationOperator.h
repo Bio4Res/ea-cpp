@@ -74,4 +74,10 @@ namespace ea {
 
     };
 
+    template<typename T>
+    concept VariationOp = requires(T& op, const individuals_v& parents) {
+        { op.apply(parents) } -> std::same_as<Individual>;
+        { op.getArity() } -> std::convertible_to<int>;
+    };
+
 }

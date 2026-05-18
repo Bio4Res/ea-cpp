@@ -1,11 +1,13 @@
 #pragma once
 
 #include <operator/selection/SelectionOperator.h>
+#include <util/OperatorRegistry.h>
 #include <util/EAUtil.h>
 
 namespace ea {
 
-    struct TournamentSelection : public SelectionOperator {
+    struct TournamentSelection
+        : public RegisteredExtension<SelectionOperator, TournamentSelection, "TOURNAMENT"> {
         /**
          * binary tournament by default
          */

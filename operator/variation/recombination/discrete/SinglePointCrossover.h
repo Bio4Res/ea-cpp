@@ -1,19 +1,21 @@
 #pragma once
 
 #include <operator/variation/recombination/RecombinationOperator.h>
+#include <util/OperatorRegistry.h>
 
 
 /**
  * Single-Point Crossover (SPX)
  */
 namespace ea {
-    struct SinglePointCrossover : public RecombinationOperator {
+    struct SinglePointCrossover
+        : public RegisteredExtension<VariationOperator, SinglePointCrossover, "SPX", RecombinationOperator> {
 
         /**
          * Generates the operator
          * @param pars probability of application
          */
-        SinglePointCrossover(const std::vector<std::string>& pars) : RecombinationOperator(pars) {
+        SinglePointCrossover(const std::vector<std::string>& pars) : RegisteredExtension(pars) {
 
         }
 /*
