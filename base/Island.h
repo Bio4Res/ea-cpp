@@ -84,6 +84,7 @@ namespace ea {
         /**
          * Reusable buffers to avoid per-iteration heap allocation in stepUp()
          */
+        individuals_v offspringBuffer;
         individuals_v stageBuffer;
         individuals_v parentsBuffer;
         /**
@@ -222,7 +223,8 @@ namespace ea {
                 population = migrate->receive(std::move(population));
                 
                 // selection ------------------------------------------------------
-                auto offspring = selection->apply(population, poolSize);
+                selection->apply(population, poolSize, offspringBuffer);
+                auto& offspring = offspringBuffer;
                 
                 // reproduction ---------------------------------------------------
                 for (auto & op : variationOps) {

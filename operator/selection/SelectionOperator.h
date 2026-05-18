@@ -5,12 +5,12 @@
 namespace ea {
 
     struct SelectionOperator : public Operator {
-        virtual individuals_v apply(individuals_v& population, const int& num) = 0;
+        virtual void apply(individuals_v& population, int num, individuals_v& out) = 0;
     };
 
     template<typename T>
-    concept SelectionOp = requires(T& op, individuals_v& pop, int n) {
-        { op.apply(pop, n) } -> std::same_as<individuals_v>;
+    concept SelectionOp = requires(T& op, individuals_v& pop, int n, individuals_v& out) {
+        { op.apply(pop, n, out) } -> std::same_as<void>;
     };
 
 }

@@ -36,6 +36,7 @@ namespace ea {
          * list of input buffers from other islands
          */
         std::unordered_map<int, std::shared_ptr<IslandBuffer>> connections;
+        individuals_v emigrantBuffer;
 
         /**
          * Creates the operator given its parameters
@@ -122,7 +123,8 @@ namespace ea {
                 if (counter == 0) {
                     counter = frequency;
                     for (const auto& c : connections) {
-                        c.second->add(std::move(emigrate->apply(population, numIndividuals)));
+                        emigrate->apply(population, numIndividuals, emigrantBuffer);
+                        c.second->add(individuals_v(emigrantBuffer));
                     }
                     return true;
                 }

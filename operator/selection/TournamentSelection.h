@@ -57,9 +57,9 @@ namespace ea {
             tournamentSize = thetournamentSize;
         }
 
-        individuals_v apply(individuals_v & population, const int& num) override {
-            individuals_v result;
-            result.reserve(num);
+        void apply(individuals_v& population, int num, individuals_v& out) override {
+            out.clear();
+            out.reserve(num);
             auto mu = population.size();
             for (int i = 0; i < num; i++) {
                int best = EAUtilRandom::instance().random(mu);
@@ -68,9 +68,8 @@ namespace ea {
                     if (compare(population[cand], population[best]))
                        best = cand;
                }
-               result.push_back(population[best]);
+               out.push_back(population[best]);
             }
-            return result;
         }
 /*
         std::string toString() {
