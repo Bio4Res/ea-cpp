@@ -87,7 +87,7 @@ namespace ea {
             this->obj = std::move(theobjf);
             for (auto& i : islands)
                 i.setObjectiveFunction(obj.get());
-            stats.setComparator(obj->getComparator());
+            stats.setObjectiveFunction(obj.get());
         }
         /**
          * Sets the diversity measure for all statistics

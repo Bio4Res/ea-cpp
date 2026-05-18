@@ -120,18 +120,6 @@ namespace ea {
     using individuals_v = std::vector<Individual>;
     using individuals_dq = std::deque<Individual>;
 
-    auto maxComp = [](const Individual& a, const Individual& b) {
-        return(b.getFitness() < a.getFitness());
-    };
-
-    /**
-     * comparator for minimization
-     */
-
-    auto minComp = [](const Individual& a, const Individual& b) {
-        return (a.getFitness() < b.getFitness());
-    };
-
 }
 
 template <>

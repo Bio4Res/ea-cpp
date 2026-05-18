@@ -47,7 +47,7 @@ public:
 			maxval = (maxval << 1) + 1;
 	}
 
-	OptimizationSense getOptimizationSense() override{
+	OptimizationSense getOptimizationSense() const override{
 		return func->getOptimizationSense();
 	}
 

@@ -14,7 +14,7 @@ namespace ea {
          * @return the optimization sense
          */
 
-        OptimizationSense getOptimizationSense() override {
+        OptimizationSense getOptimizationSense() const override {
             return OptimizationSense::MINIMIZATION;
         }
     protected:

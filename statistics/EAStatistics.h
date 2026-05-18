@@ -55,12 +55,11 @@ namespace ea {
             runActive = false;
         }
 
-        void setComparator(const std::function<bool(const Individual&, const Individual&)>& comparator) override {
-            Statistics::setComparator(comparator);
+        void setObjectiveFunction(ObjectiveFunction* theobjf) override {
+            Statistics::setObjectiveFunction(theobjf);
             const size_t n = islands.size();
-            for (size_t i = 0; i < n; ++i) {
-                islands[i].getStatistics().setComparator(comparator);
-            }
+            for (size_t i = 0; i < n; ++i)
+                islands[i].getStatistics().setObjectiveFunction(theobjf);
         }
 
         void setDiversityMeasure(DiversityMeasure * dm) override {
@@ -137,7 +136,7 @@ namespace ea {
             
             for (size_t j = 1; j < n; ++j) {
                 Individual& cand = islands[j].getStatistics().getBest(i);
-                if (comparator(cand, *best))
+                if (compare(cand, *best))
                     best = &cand;
             }
             return *best;
@@ -150,7 +149,7 @@ namespace ea {
             Individual* best = &getBest(0);
             for (size_t j = 1; j < numruns; ++j) {
                 Individual& cand = getBest(j);
-                if (comparator(cand, *best))
+                if (compare(cand, *best))
                     best = &cand;
             }
             return *best;

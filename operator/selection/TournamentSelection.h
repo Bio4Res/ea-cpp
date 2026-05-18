@@ -63,7 +63,7 @@ namespace ea {
                int best = EAUtilRandom::instance().random(mu);
                for (int j = 1; j < tournamentSize; j++) {
                     int cand = EAUtilRandom::instance().random(mu);
-                    if (comparator(population[cand], population[best]))
+                    if (compare(population[cand], population[best]))
                        best = cand;
                }
                result.push_back(population[best]);

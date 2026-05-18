@@ -76,7 +76,7 @@ namespace ea {
             for (size_t i = 1; i < l; i++) {
                 auto & ind = pop.at(i);
                 //if (comparator(ind, best) < 0) {
-                if (comparator(ind, best)) {
+                if (compare(ind, best)) {
                     best = ind;
                 }
                 mean += ind.getFitness();
@@ -89,7 +89,7 @@ namespace ea {
 
             current.push_back(StatsEntry{ evals, best.getFitness(), mean, h });
 
-            if ((currentSols.empty()) || comparator(best, last)) {
+            if ((currentSols.empty()) || compare(best, last)) {
                 currentSols.push_back(IndividualRecord{ evals, best });
                 last = best;
             }
@@ -173,8 +173,7 @@ namespace ea {
             Individual& best = getBest(0);
             for (size_t j = 1; j < numruns; j++) {
                 Individual& cand = getBest(j);
-                //if (comparator(cand, best) < 0)
-                if (comparator(cand, best))
+                if (compare(cand, best))
                     best = cand;
             }
             return best;

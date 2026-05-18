@@ -1,8 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <functional>
-#include <base/Individual.h>
+#include <fitness/ObjectiveFunction.h>
 #include <statistics/DiversityMeasure.h>
 #include <nlohmann/json.hpp>
 
@@ -32,22 +31,22 @@ namespace ea {
         bool runActive = false;
 
         /**
-         * to compare solutions
+         * objective function used to compare individuals
          */
-        std::function<bool(const Individual&, const Individual&)> comparator;
+        ObjectiveFunction* obj = nullptr;
 
         /**
          * to compute diversity
          */
-        DiversityMeasure * diversity{ nullptr };
+        DiversityMeasure* diversity{ nullptr };
 
-        /**
-         * Sets the comparator used to compare individuals
-         * @param comparator the comparator
-         */
     public:
-        virtual void setComparator(const std::function<bool(const Individual&, const Individual&)> & comparator) {
-            this->comparator = comparator;
+        virtual void setObjectiveFunction(ObjectiveFunction* theobjf) {
+            this->obj = theobjf;
+        }
+
+        [[nodiscard]] bool compare(const Individual& a, const Individual& b) const noexcept {
+            return obj->compare(a, b);
         }
 
         /**

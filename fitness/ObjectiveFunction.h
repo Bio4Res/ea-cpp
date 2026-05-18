@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <base/Individual.h>
 
 namespace ea {
@@ -45,16 +44,16 @@ namespace ea {
          * Indicates whether the goal is maximization or minimization
          * @return the optimization sense
          */
-        virtual OptimizationSense getOptimizationSense() = 0;
+        virtual OptimizationSense getOptimizationSense() const = 0;
         /**
-         * Returns the comparator to use given the optimization sense
-         * @return the comparator to use given the optimization sense
+         * Returns true iff individual a is better than individual b.
+         * Override in subclasses for non-trivial orderings (constrained,
+         * multi-objective, etc.).
          */
-        std::function<bool(const Individual&, const Individual&)> getComparator() {
-            if (getOptimizationSense() == OptimizationSense::MAXIMIZATION)
-                return maxComp;
-            else
-                return minComp;
+        virtual bool compare(const Individual& a, const Individual& b) const noexcept {
+            return getOptimizationSense() == OptimizationSense::MINIMIZATION
+                ? a.getFitness() < b.getFitness()
+                : a.getFitness() > b.getFitness();
         }
         /**
          * Returns the number of evaluations so far
