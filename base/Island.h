@@ -76,6 +76,11 @@ namespace ea {
          */
         std::unique_ptr<MigrationOperator> migrate;
         /**
+         * Reusable buffers to avoid per-iteration heap allocation in stepUp()
+         */
+        individuals_v stageBuffer;
+        individuals_v parentsBuffer;
+        /**
          * Creates an island with a given configuration
          * @param id the island ID
          * @param ic the configuration of the island
@@ -217,25 +222,26 @@ namespace ea {
                 for (auto & op : variationOps) {
                     int a = op->getArity();
                     int m = static_cast<int>(offspring.size()) / a;
-                    
-                    individuals_v stage;
-                    stage.reserve(m);  // reservo memoria sin crear individuos
-                    
-                    individuals_v parents;
-                    parents.reserve(a);
-                    
+
+                    stageBuffer.clear();
+                    stageBuffer.reserve(m);
+
+                    parentsBuffer.clear();
+                    parentsBuffer.reserve(a);
+
                     for (int j = 0; j < m; j++) {
-                        parents.clear();  //para reutilizarlo
-                        
+                        parentsBuffer.clear();
+
                         for (int i = 0; i < a; i++) {
-                            int idx = j * a + i; //precalculo el incide para usar emplace_back()
-                            parents.emplace_back(std::move(offspring[idx]));  //optimizado!
+                            int idx = j * a + i;
+                            parentsBuffer.emplace_back(std::move(offspring[idx]));
                         }
-                        
-                        stage.emplace_back(op->apply(parents));
+
+                        stageBuffer.emplace_back(op->apply(parentsBuffer));
                     }
-                    
-                    offspring = std::move(stage);  //optimizado!
+
+                    offspring.swap(stageBuffer);
+                    stageBuffer.clear();
                 }
                 
                 // evaluate new individuals ---------------------------------------
