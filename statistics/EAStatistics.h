@@ -16,11 +16,11 @@ namespace ea {
         /**
          * list of seeds used in each run
          */
-        std::vector<long> seeds;
+        std::vector<uint64_t> seeds;
         /**
          * last seed used
          */
-        long currentSeed = 0;
+        uint64_t currentSeed = 0;
         /**
          * to measure computational times
          */

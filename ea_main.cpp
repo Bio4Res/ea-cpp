@@ -133,7 +133,7 @@ std::unique_ptr<ea::DiversityMeasure> createMeasure(std::string& problem) {
 //MAIN AVANZADO
 
 struct Experiment {
-    int maxruns;
+    uint64_t maxruns;
     std::string problem;
     int numvars;
     float range;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
 
         config::EAConfiguration conf = jc.get<config::EAConfiguration>();
     
-        long seed;
+        uint64_t seed;
         std::ifstream lastseedf("lastseed.txt");
         if(lastseedf.fail()){
             seed = conf.seed;

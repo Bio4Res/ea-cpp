@@ -33,11 +33,11 @@ namespace ea {
         /**
          * current seed for the RNG
          */
-        uint32_t seed;
+        uint64_t seed;
         /**
          * base seed for each batch of runs
          */
-        uint32_t baseSeed;
+        uint64_t baseSeed;
         /**
          * statistics of the EA
          */

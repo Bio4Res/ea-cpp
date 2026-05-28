@@ -12,17 +12,17 @@ namespace ea {
           distribution_r(0.0, 1.0),
           distribution_n(0.0, 1.0)
     {}
-        uint32_t seed;
-        std::mt19937 generator;
+        uint64_t seed;
+        std::mt19937_64 generator;
         std::uniform_int_distribution<int> distribution_i;
         std::uniform_real_distribution<double> distribution_r;
         std::normal_distribution<double> distribution_n;
     public:
-        void setSeed(uint32_t n) {
+        void setSeed(uint64_t n) {
             seed = n;
-            generator.seed(n); 
+            generator.seed(n);
         }
-        uint32_t getSeed() const {
+        uint64_t getSeed() const {
             return seed;
         }
         int random(const int bound) {
